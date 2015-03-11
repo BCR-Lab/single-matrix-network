@@ -6,24 +6,38 @@
 --------------------Configuration: SIngleMatrixNetwork - Win32 Debug--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\TonyZ\LOCALS~1\Temp\RSP191.tmp" with contents
+Creating temporary file "C:\DOCUME~1\ShawnL\LOCALS~1\Temp\RSP10.tmp" with contents
 [
-/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
-"C:\BCR_Lab\Projects\SIngleMatrixNetwork02\SIngleMatrixNetwork.cpp"
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FR"Debug/" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\Documents and Settings\ShawnL\My Documents\single-matrix-network\Network.cpp"
+"C:\Documents and Settings\ShawnL\My Documents\single-matrix-network\SIngleMatrixNetwork.cpp"
 ]
-Creating command line "cl.exe @C:\DOCUME~1\TonyZ\LOCALS~1\Temp\RSP191.tmp" 
-Creating temporary file "C:\DOCUME~1\TonyZ\LOCALS~1\Temp\RSP192.tmp" with contents
+Creating command line "cl.exe @C:\DOCUME~1\ShawnL\LOCALS~1\Temp\RSP10.tmp" 
+Creating temporary file "C:\DOCUME~1\ShawnL\LOCALS~1\Temp\RSP11.tmp" with contents
+[
+/nologo /MLd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FR"Debug/" /Fp"Debug/SIngleMatrixNetwork.pch" /Yc"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\Documents and Settings\ShawnL\My Documents\single-matrix-network\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\ShawnL\LOCALS~1\Temp\RSP11.tmp" 
+Creating temporary file "C:\DOCUME~1\ShawnL\LOCALS~1\Temp\RSP12.tmp" with contents
 [
 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/SIngleMatrixNetwork.pdb" /debug /machine:I386 /out:"Debug/SIngleMatrixNetwork.exe" /pdbtype:sept 
-.\Debug\Network.obj
-.\Debug\SIngleMatrixNetwork.obj
-.\Debug\StdAfx.obj
+".\Debug\Network.obj"
+".\Debug\SIngleMatrixNetwork.obj"
+".\Debug\StdAfx.obj"
 ]
-Creating command line "link.exe @C:\DOCUME~1\TonyZ\LOCALS~1\Temp\RSP192.tmp"
+Creating command line "link.exe @C:\DOCUME~1\ShawnL\LOCALS~1\Temp\RSP12.tmp"
 <h3>Output Window</h3>
 Compiling...
+StdAfx.cpp
+Compiling...
+Network.cpp
 SIngleMatrixNetwork.cpp
+Generating Code...
 Linking...
+Creating command line "bscmake.exe /nologo /o"Debug/SIngleMatrixNetwork.bsc"  ".\Debug\StdAfx.sbr" ".\Debug\Network.sbr" ".\Debug\SIngleMatrixNetwork.sbr""
+Creating browse info file...
+<h3>Output Window</h3>
 
 
 
