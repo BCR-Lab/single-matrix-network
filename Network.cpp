@@ -130,30 +130,38 @@ void Network::networkActivation( void  )
 {
 	int neuron_number, source_neuron_number, k;
 
-	// -----------------  Compute intrisinc network activations
+	// -----------------  Compute intrinsic network activations
 
 	// -- Update autapses
 	for( neuron_number = 0; neuron_number < networkDimension; ++neuron_number){
 
 		k = networkDimension*neuron_number + neuron_number;  // you should make this a function rather than computing it 2x in this routine, it could be re-used for other routines and avoid problems of different computations in different locations
+        printf("activation[%d] = self(%.2f) * weight[%d,%d](%.2f)", neuron_number,
+               neuronActivation[neuron_number], neuron_number, neuron_number, networkWeights[k]);
 		neuronActivation[neuron_number] = neuronActivation[neuron_number] * networkWeights[k];
-//printf("-- %2.3lf %2.3lf\n", neuronActivation[neuron_number], networkWeights[k]);
+        printf(" => %.2f\n", neuronActivation[neuron_number]);
 	}
 
+    printf("  b. Update inputs from other neurons\n");
 	// -- Update inputs from other neurons
 	for( neuron_number = 0; neuron_number < networkDimension; ++neuron_number){  // note that iterations can be reduced in this routine by skipping the inputs -- which do not need to be updated through network weights, they are set from the outside
 		for(source_neuron_number = 0; source_neuron_number < networkDimension; ++source_neuron_number){
 
 			if(neuron_number != source_neuron_number){						// used self weights above, avoid double dipping
 				k = networkDimension*source_neuron_number + neuron_number;	// obtain the index of the 2d weight array represented as a 1 d array.
+                printf("activation[%d] = self(%.2f) + output_source[%d]=%.2f * weight[%d,%d](%.2f)",
+                       neuron_number, neuronActivation[neuron_number], source_neuron_number, neuronOutput[source_neuron_number], source_neuron_number, neuron_number, networkWeights[k]);
 				neuronActivation[neuron_number] += neuronOutput[source_neuron_number] * networkWeights[k];
-//printf("-- %2.3lf %2.3lf\n", neuronActivation[neuron_number], networkWeights[k]);
+                printf(" => %.2f\n", neuronActivation[neuron_number]);
 			}
 		}
 
 	// ------------------ Add External Inputs to Activations  -----------------------
-		if( neuron_number < numberOfInputs ) {
+		if (neuron_number < numberOfInputs ) {
+            printf("activation[%d] = self(%.2f) + network_input[%d]=%.2f", neuron_number,
+                   neuronActivation[neuron_number], neuron_number, networkInputs[neuron_number]);
 			neuronActivation[neuron_number] += networkInputs[neuron_number]; // Network inputs are set externally
+            printf(" => %.2f\n", neuronActivation[neuron_number]);
 //printf("-- %2.3lf %2.3lf\n", neuronActivation[neuron_number], networkInputs[neuron_number]);
 		}
 	}
@@ -214,11 +222,14 @@ void Network::copyNetworkInputsToInputNeuronOutputs( void )
 
 void Network::setNetworkOuput( void )
 {
+    printf("4. setNetworkOutput()\n");
 	int i;
 
 	for(i = 0; i< numberOfOutputs; ++i) {
 		networkOutputs[i] = neuronOutput[numberOfInputs + numberOfInterNeurons + i];
-
+        printf("networkOutput[%d] := neuronOutput[%d](%.2f)\n", i,
+               numberOfInputs + numberOfInterNeurons + i,
+               neuronOutput[numberOfInputs + numberOfInterNeurons + i]);
 //printf("* %d ",numberOfInputs + numberOfInterNeurons + i);
 //printf("* %lf ",networkNeuronOutput[numberOfInputs + numberOfInterNeurons -1 + i]);
 
@@ -237,8 +248,10 @@ void Network::setNetworkOuput( void )
 
 void Network::copyNeuronActivationsToNeuronOutputs( void )
 {
+    printf("2. copyNeuronActivationsToNeuronOutputs() (WARN) does nothing\n");
 	int i;
 
+    // FIXME SL: This doesn't do anything; should it copy them to neuronOutput array?
 	for(i = 0; i < networkDimension; ++i){
 		neuronActivation[i] = neuronActivation[i];
 //printf("%2.2lf %2.2lf | ",networkNeuronOutput[i] , networkNeuronActivation[i]);
@@ -259,13 +272,15 @@ void Network::thresholdNeuronOutputs( void )
 {
 	int i;
 
+    printf("3. thresholdNeuronOutputs()\n");
 	for(i = 0; i < networkDimension; ++i){
 		if(neuronActivation[i] > neuronThresholds[i]){
 			neuronOutput[i] = neuronActivation[i] - neuronThresholds[i];
 //			neuronActivation[i] = neuronActivation[i];
 		}
 		else neuronOutput[i] = 0.0;
-//printf("*** %2.3lf %2.3lf\n",neuronOutput[i],neuronThresholds[i]);
+        printf("neuronOutput[%d]: activation(%.2f) > threshold(%.2f)? ==> %.2f\n", i,
+               neuronActivation[i], neuronThresholds[i], neuronOutput[i]);
 	}
 //printf("\n ");
 
@@ -657,7 +672,7 @@ void Network::printNetworkOuput( void )
 */
 void Network::cycleNetwork( void )
 {
-
+    printf("***** cycleNetwork\n");
 	networkActivation( );						// perform adjusted matrix multiplication of the weights and current network state
 //	setNetworkNeuronOutput( );					// Transform activations into outputs and copy
 	copyNeuronActivationsToNeuronOutputs( );
@@ -703,6 +718,7 @@ void Network::cycleNetworkSquash(  double offset=0, double expSlope=1 )
 
 void Network::cycleNetworkNormalizeHebbianLearning( void )
 {
+    printf("***** cycleNetworkNormalizeHebbianLearning()\n");
 /* *+*  */
 	hebbianExcitatoryWeightUpdate( );
 	normalizeNonDiagonalExcitatoryNeuronWeights( ); // note that this temporary value of 1.0 will ensure the weights of all the units sum to 1.0.
@@ -722,6 +738,7 @@ void Network::cycleNetworkNormalizeHebbianLearning( void )
   */
 void Network::hebbianWeightUpdate( void  )
 {
+    printf("1. hebbianWeightUpdate()\n");
 	int source_neuron_number, target_neuron_number, weight_index;
 	double weight_increment;
 
@@ -731,7 +748,10 @@ void Network::hebbianWeightUpdate( void  )
 				weight_increment = 0;
 				weight_index = computeWeightIndex( source_neuron_number, target_neuron_number );
 				weight_increment = neuronLearningRate[target_neuron_number]*neuronOutput[source_neuron_number]*neuronOutput[target_neuron_number]*plasticWeightsMask[weight_index];  // remember that the plastic weights mask AND the learning rate for a neuron must agree ( both be non-zero) for a neuron to have adaptive weights
+                printf("weight[%d] = prev_weight(%.2f) + %.2f", weight_index,
+                       networkWeights[weight_index], weight_increment);
 				networkWeights[weight_index] += weight_increment;
+                printf(" => %.2f\n", networkWeights[weight_index]);
 			}
 
 		}
@@ -753,6 +773,7 @@ void Network::hebbianWeightUpdate( void  )
   */
 void Network::hebbianExcitatoryWeightUpdate( void )
 {
+    printf("1. hebbianExcitatoryWeightUpdate()\n");
 	int source_neuron_number, target_neuron_number, weight_index;
 	double weight_increment;
 
@@ -764,7 +785,17 @@ void Network::hebbianExcitatoryWeightUpdate( void )
 				if( networkWeights[weight_index] > 0 ){
 
 					weight_increment = neuronLearningRate[target_neuron_number]*neuronOutput[source_neuron_number]*neuronOutput[target_neuron_number]*plasticWeightsMask[weight_index];  // remember that the plastic weights mask AND the learning rate for a neuron must agree ( both be non-zero) for a neuron to have adaptive weights
+                    printf("  increment = learning_rate(%.2f) * source_output(%.2f) * target_output(%.2f) * mask(%d)\n",
+                           neuronLearningRate[target_neuron_number],
+                           neuronOutput[source_neuron_number],
+                           neuronOutput[target_neuron_number],
+                           plasticWeightsMask[weight_index]);
+                    printf("weight[%d,%d] = weight[%d,%d](%.2f) + increment(%.2f)",
+                           source_neuron_number, target_neuron_number,
+                           source_neuron_number, target_neuron_number,
+                           networkWeights[weight_index], weight_increment);
 					networkWeights[weight_index] += weight_increment;
+                    printf(" => %.2f\n", networkWeights[weight_index]);
 				}
 			}
 
@@ -918,6 +949,7 @@ void Network::normalizeNonDiagonalNeuronWeights( void )
   */
 void Network::normalizeNonDiagonalExcitatoryNeuronWeights( void )
 {
+    printf("2. normalizeNonDiagonalExcitatoryNeuronWeights()\n");
 	int source_neuron_number, target_neuron_number, weight_index;
 	double weight_sum;
 
@@ -932,7 +964,13 @@ void Network::normalizeNonDiagonalExcitatoryNeuronWeights( void )
 		for( source_neuron_number = 0; source_neuron_number < networkDimension; ++source_neuron_number){
 			weight_index = computeWeightIndex( source_neuron_number, target_neuron_number );
 			if(target_neuron_number != source_neuron_number && weight_sum != 0.0 && networkWeights[weight_index] > 0){  // avoid division by zero for input units the autapse may be the only non-zero weight.
+                printf("weight[%d,%d] = weight_total[%d](%.2f) * weight[%d,%d](%.2f) / sum(%.2f)",
+                       source_neuron_number, target_neuron_number, target_neuron_number,
+                       neuronWeightTotal[ target_neuron_number ],
+                       source_neuron_number, target_neuron_number,
+                       networkWeights[weight_index], weight_sum);
 				networkWeights[weight_index] = neuronWeightTotal[ target_neuron_number ]*( networkWeights[weight_index]/weight_sum);
+                printf(" => %.2f\n", networkWeights[weight_index]);
 			}
 		}
 	}
@@ -987,7 +1025,7 @@ readNetworkFromFile
 */
 int Network::readNetworkFromFile(char * file_name )
 {
-	printf("Reading file %s ...\n", file_name);
+    printf("Reading file %s\n", file_name);
 	int i, error = 0;
 	char dummy[MAX_DUMMY_STRING_LENGTH];
 	FILE *fp;
