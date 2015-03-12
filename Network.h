@@ -14,12 +14,12 @@
 #define MAX_NET_OUTPUTS 10		// Cannot exceed the size of the net
 #define MAX_DUMMY_STRING_LENGTH 30
 
-class Network  
+class Network
 {
 public:
 	Network();								// default network constructor.
-	Network::Network( char * file_name );	// Construct the network from a stored file.
-	Network::Network(int inputs, int interneurons, int outputs, char * file_name ); // construct a blank network to user specified size and write it to a file for later editing
+	Network( char * file_name );	// Construct the network from a stored file.
+	Network(int inputs, int interneurons, int outputs, char * file_name ); // construct a blank network to user specified size and write it to a file for later editing
 	virtual ~Network();
 
 	// Members---------------------
@@ -40,56 +40,56 @@ private:
 	double networkWeights[MAX_NET_DIMENSION*MAX_NET_DIMENSION];
 	double networkInputs[MAX_NET_INPUTS];
 	double networkOutputs[MAX_NET_OUTPUTS];
-	short int  plasticWeightsMask[MAX_NET_DIMENSION*MAX_NET_DIMENSION]; // a filter. Plastic weights are = 1, fixed = 0. THis allows for the specification of some fixed and some plastic weights in the same neuron. This could be a binary array ( type bool) to save space. 
+	short int  plasticWeightsMask[MAX_NET_DIMENSION*MAX_NET_DIMENSION]; // a filter. Plastic weights are = 1, fixed = 0. THis allows for the specification of some fixed and some plastic weights in the same neuron. This could be a binary array ( type bool) to save space.
 
 	// Functions -------------------------
 
-	Network::instantiateDefaultNetwork( void );
-	Network::setNetworkOuput( void );
-	Network::copyNeuronActivationsToNeuronOutputs( void );
-	Network::copyNetworkInputsToInputNeuronOutputs( void );
-	Network::thresholdNeuronOutputs( void );
-	//******Network::squashNeuronOutputs( void );
-	Network::squashNeuronOutputs( double offset, double expSlope);
-	Network::setNeuronOutput( double value );
-	Network::setNeuronThresholds( double value );
-	Network::setNeuronLearningRate( double value );
-	Network::setNeuronRefractoryState( int value );
-	Network::setPlasticWeightsMask( short int value ); // in general it is good to set this to 1 and let the learning rate determine plasticity.  This is to be used for special cases
-	Network::setNeuronActivation( double value );
-	Network::setNetworkOutputs( double value );
-	Network::networkActivation( void  );
-	Network::hebbianWeightUpdate( void  );
-	Network::hebbianExcitatoryWeightUpdate( void );
-	Network::hebbianInhibitoryWeightUpdate( void );
-	Network::normalizeNeuronWeights( void );			// Update weight totals to neuron-specific values
-	Network::normalizeNeuronWeights( double value );	// Uptdate weight totals to specificed values
-	Network::normalizeNonDiagonalNeuronWeights( void );
-	Network::normalizeNonDiagonalInhibitoryNeuronWeights( void );
-	Network::normalizeNonDiagonalExcitatoryNeuronWeights( void );
-	Network::setNeuronWeightTotal( double value);
-	int Network::computeWeightIndex( int source_neuron_number, int target_neuron_number );
+	void instantiateDefaultNetwork( void );
+	void setNetworkOuput( void );
+	void copyNeuronActivationsToNeuronOutputs( void );
+	void copyNetworkInputsToInputNeuronOutputs( void );
+	void thresholdNeuronOutputs( void );
+	//******void squashNeuronOutputs( void );
+	void squashNeuronOutputs( double offset, double expSlope);
+	void setNeuronOutput( double value );
+	void setNeuronThresholds( double value );
+	void setNeuronLearningRate( double value );
+	int setNeuronRefractoryState( int value );
+	void setPlasticWeightsMask( short int value ); // in general it is good to set this to 1 and let the learning rate determine plasticity.  This is to be used for special cases
+	void setNeuronActivation( double value );
+	void setNetworkOutputs( double value );
+	void networkActivation( void  );
+	void hebbianWeightUpdate( void  );
+	void hebbianExcitatoryWeightUpdate( void );
+	void hebbianInhibitoryWeightUpdate( void );
+	void normalizeNeuronWeights( void );			// Update weight totals to neuron-specific values
+	void normalizeNeuronWeights( double value );	// Uptdate weight totals to specificed values
+	void normalizeNonDiagonalNeuronWeights( void );
+	void normalizeNonDiagonalInhibitoryNeuronWeights( void );
+	void normalizeNonDiagonalExcitatoryNeuronWeights( void );
+	void setNeuronWeightTotal( double value);
+	int computeWeightIndex( int source_neuron_number, int target_neuron_number );
 
 public:
-	Network::cycleNetwork( void );
-	Network::cycleNetworkSquash(  double offset, double expSlope );
-	Network::cycleNetworkNormalizeHebbianLearning( void );
-	Network::printNetworkOuput( void );
-	Network::printNetworkOutputState( void );
-	Network::setNetworkWeightsDiagonalRange( double value, int start_row_col, int end_row_col );
-	Network::setNetworkWeightsUpperLowerTriangleAndDiagonal( double diagonal_value, double upper_triangle_value, double lower_triangle_value);
-	Network::setNetworkWeightsRectangle( double value, int start_row, int end_row, int start_column, int end_column );
-	Network::setNetworkWeightsUpperTriangle( double value, int start_row, int end_row, int start_column, int end_column );
-	Network::setNetworkWeightsLowerTriangle( double value, int start_row, int end_row, int start_column, int end_column );
-	Network::writeNetworkOutputStateToFile( char * file_name );
-	Network::writeNetworkActivationStateToFile( char * file_name );
-	Network::writeNetworkWeightsToFile( char * file_name );
-	Network::setNetworkInput( double *vector);
-	Network::getNetworkOuput( double * vector );
-	Network::readNetworkFromFile( char * file_name );
-	Network::writeNetworkToFile( char * file_name );
-	Network::setNetworkWeights( double value );
-	Network::PrintNetworkState( void);
+	void cycleNetwork( void );
+	void cycleNetworkSquash(  double offset, double expSlope );
+	void cycleNetworkNormalizeHebbianLearning( void );
+	void printNetworkOuput( void );
+	void printNetworkOutputState( void );
+	void setNetworkWeightsDiagonalRange( double value, int start_row_col, int end_row_col );
+	void setNetworkWeightsUpperLowerTriangleAndDiagonal( double diagonal_value, double upper_triangle_value, double lower_triangle_value);
+	void setNetworkWeightsRectangle( double value, int start_row, int end_row, int start_column, int end_column );
+	void setNetworkWeightsUpperTriangle( double value, int start_row, int end_row, int start_column, int end_column );
+	void setNetworkWeightsLowerTriangle( double value, int start_row, int end_row, int start_column, int end_column );
+	void writeNetworkOutputStateToFile( char * file_name );
+	void writeNetworkActivationStateToFile( char * file_name );
+	void writeNetworkWeightsToFile( char * file_name );
+	void setNetworkInput( double *vector);
+	void getNetworkOuput( double * vector );
+	int readNetworkFromFile( char * file_name );
+	int writeNetworkToFile( char * file_name );
+	void setNetworkWeights( double value );
+	void PrintNetworkState( void);
 
 };
 

@@ -6,6 +6,7 @@
 #include "Network.h"
 #include <stdio.h>
 #include <math.h>
+#include <string>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -23,7 +24,7 @@ Network::Network()
 	setNeuronThresholds( 0.0 );		// set thresholds for output in network neurons.
 	setNeuronLearningRate( 0.0 );	// set learning rate for plastic neurons in network - 0 is non-learning.
 	setNeuronRefractoryState( 0 );	// set set refactory state for neurons in the network - 0 is no refactory state -- must not be negative.
-	setNeuronWeightTotal( 1.0 );	// set set refactory state for neurons in the network - 0 is no refactory state -- must not be negative.	
+	setNeuronWeightTotal( 1.0 );	// set set refactory state for neurons in the network - 0 is no refactory state -- must not be negative.
 	setNetworkWeights( 0.5 );		// Temporary function and value to test the code
 	setNeuronActivation( 0.0 );		// Temporary function and value to test the code
 	setNetworkOutputs( 0.0 );
@@ -51,7 +52,7 @@ Network::Network(int inputs, int interneurons, int outputs, char * out_file_name
 	setNetworkOutputs( 0.0 );
 	setPlasticWeightsMask( 0 );
 	normalizeNeuronWeights( );		// Set the sum of network weights for each unit to the unit total specified above.
-	
+
 	writeNetworkToFile( out_file_name );
 }
 
@@ -73,7 +74,7 @@ Network::~Network()
 }
 
 
-Network::instantiateDefaultNetwork( void )
+void Network::instantiateDefaultNetwork( void )
 {
 	numberOfInputs = 2 ;
 	numberOfOutputs = 2;
@@ -97,7 +98,7 @@ Network::instantiateDefaultNetwork( void )
   Print network state
 
   */
-Network::PrintNetworkState( void )
+void Network::PrintNetworkState( void )
 {
 	printf(" Number of inputs: %d\n",numberOfInputs);
 	printf(" Number of outputs: %d\n",numberOfOutputs);
@@ -113,14 +114,14 @@ Network::PrintNetworkState( void )
   It treates autapses and inputs specially so it is not strictly speaking pure matrix mathematics
   */
 
-Network::networkActivation( void  )
+void Network::networkActivation( void  )
 {
 	int neuron_number, source_neuron_number, k;
 
 	// -----------------  Compute intrisinc network activations
 
 	// -- Update autapses
-	for( neuron_number = 0; neuron_number < networkDimension; ++neuron_number){	
+	for( neuron_number = 0; neuron_number < networkDimension; ++neuron_number){
 
 		k = networkDimension*neuron_number + neuron_number;  // you should make this a function rather than computing it 2x in this routine, it could be re-used for other routines and avoid problems of different computations in different locations
 		neuronActivation[neuron_number] = neuronActivation[neuron_number] * networkWeights[k];
@@ -140,7 +141,7 @@ Network::networkActivation( void  )
 
 	// ------------------ Add External Inputs to Activations  -----------------------
 		if( neuron_number < numberOfInputs ) {
-			neuronActivation[neuron_number] += networkInputs[neuron_number]; // Network inputs are set externally 
+			neuronActivation[neuron_number] += networkInputs[neuron_number]; // Network inputs are set externally
 //printf("-- %2.3lf %2.3lf\n", neuronActivation[neuron_number], networkInputs[neuron_number]);
 		}
 	}
@@ -151,15 +152,15 @@ Network::networkActivation( void  )
   setNetworkInput
 
   copy and external vector of inputs the the input section of the network inputs vector.
-	
+
 	  note: this routine should check that the inputs are approprirate -- in bounds.
 
 */
 
-Network::setNetworkInput( double *vector)
+void Network::setNetworkInput( double *vector)
 {
 	int i;
-	
+
 	for(i = 0; i< numberOfInputs ; ++i) {
 		networkInputs[i] = vector[i];
 //printf("input %lf ",vector[i]);
@@ -176,10 +177,10 @@ Network::setNetworkInput( double *vector)
 
 */
 
-Network::copyNetworkInputsToInputNeuronOutputs( void )
+void Network::copyNetworkInputsToInputNeuronOutputs( void )
 {
 	int i;
-	
+
 	for(i = 0; i < numberOfInputs; ++i ) {
 		neuronOutput[i] = networkInputs[i];
 //printf("input %lf ",networkNeuronOutput[i]);
@@ -194,15 +195,15 @@ Network::copyNetworkInputsToInputNeuronOutputs( void )
  setNetworkOuput
 
   copy and external vector of inputs the the input section of the network inputs vector.
-	
+
 	  note: this routine should check that the inputs are approprirate -- in bounds.
 
 */
 
-Network::setNetworkOuput( void )
+void Network::setNetworkOuput( void )
 {
 	int i;
-	
+
 	for(i = 0; i< numberOfOutputs; ++i) {
 		networkOutputs[i] = neuronOutput[numberOfInputs + numberOfInterNeurons + i];
 
@@ -222,10 +223,10 @@ Network::setNetworkOuput( void )
 
 //Network::setNetworkNeuronOutput( void )
 
-Network::copyNeuronActivationsToNeuronOutputs( void )
+void Network::copyNeuronActivationsToNeuronOutputs( void )
 {
 	int i;
-	
+
 	for(i = 0; i < networkDimension; ++i){
 		neuronActivation[i] = neuronActivation[i];
 //printf("%2.2lf %2.2lf | ",networkNeuronOutput[i] , networkNeuronActivation[i]);
@@ -242,10 +243,10 @@ Network::copyNeuronActivationsToNeuronOutputs( void )
 
 */
 
-Network::thresholdNeuronOutputs( void )
+void Network::thresholdNeuronOutputs( void )
 {
 	int i;
-	
+
 	for(i = 0; i < networkDimension; ++i){
 		if(neuronActivation[i] > neuronThresholds[i]){
 			neuronOutput[i] = neuronActivation[i] - neuronThresholds[i];
@@ -269,14 +270,14 @@ Network::thresholdNeuronOutputs( void )
 
 */
 
-Network::squashNeuronOutputs( double offset=0, double expSlope=1)
+void Network::squashNeuronOutputs( double offset=0, double expSlope=1)
 {
 	int i;
-	
+
 	for(i = 0; i < networkDimension; ++i){
-		
+
 			neuronOutput[i] = (1/(1+exp(-neuronActivation[i] * expSlope) ) + offset);
-		
+
 	}
 
 
@@ -302,10 +303,10 @@ Network::squashNeuronOutputs( double offset=0, double expSlope=1)
   a function meant to supply the network outputs to outside process
 
 */
-Network::getNetworkOuput( double * vector )
+void Network::getNetworkOuput( double * vector )
 {
 	int i;
-	
+
 	for(i = 0; i< numberOfOutputs; ++i) {
 		vector[i] = networkOutputs[i];
 	}
@@ -320,15 +321,15 @@ Network::getNetworkOuput( double * vector )
   a function meant to supply the network outputs to outside process
 
 */
-Network::setNetworkWeights( double value )
+void Network::setNetworkWeights( double value )
 {
 	int i;
-	
+
 	for(i = 0; i< networkDimension*networkDimension ; ++i) {
 		networkWeights[i] = value;
-		
+
 	}
-	
+
 
 }
 
@@ -340,17 +341,17 @@ Network::setNetworkWeights( double value )
 
   a function meant to supply the network outputs to outside process
 
- 
+
 */
-Network::setNetworkWeightsDiagonalRange( double value, int start_row_and_col, int end_row_and_col )
+void Network::setNetworkWeightsDiagonalRange( double value, int start_row_and_col, int end_row_and_col )
 {
 	int i;
-	
+
 	for(i = start_row_and_col; i < end_row_and_col; i++) {
 		networkWeights[i*networkDimension + i] = value;
-		
+
 	}
-	
+
 }
 
 /* --------------------------------------------------
@@ -361,17 +362,17 @@ Network::setNetworkWeightsDiagonalRange( double value, int start_row_and_col, in
 
   NEEDS to check that values passeed are in bounds of the array.
 */
-Network::setNetworkWeightsRectangle( double value, int start_row, int end_row, int start_column, int end_column )
+void Network::setNetworkWeightsRectangle( double value, int start_row, int end_row, int start_column, int end_column )
 {
 	int i, j, index;
-	
+
 	for(i = start_column; i < end_column; i++) {
 		for(j = start_row; j < end_row ; j++) {
 			index = networkDimension*i +j;
 			networkWeights[index] = value;
 		}
 	}
-	
+
 }
 
 /* --------------------------------------------------
@@ -382,10 +383,10 @@ Network::setNetworkWeightsRectangle( double value, int start_row, int end_row, i
 
   NEEDS to check that values passeed are in bounds of the array.
 */
-Network::setNetworkWeightsUpperTriangle( double value, int start_row, int end_row, int start_column, int end_column )
+void Network::setNetworkWeightsUpperTriangle( double value, int start_row, int end_row, int start_column, int end_column )
 {
 	int i, j, index;
-	
+
 	for(i = start_column; i < end_column; i++) {
 		for(j = start_row; j < end_row ; j++) {
 			if(i > j ){
@@ -394,7 +395,7 @@ Network::setNetworkWeightsUpperTriangle( double value, int start_row, int end_ro
 			}
 		}
 	}
-	
+
 }
 
 /* --------------------------------------------------
@@ -405,10 +406,10 @@ Network::setNetworkWeightsUpperTriangle( double value, int start_row, int end_ro
 
   NEEDS to check that values passeed are in bounds of the array.
 */
-Network::setNetworkWeightsLowerTriangle( double value, int start_row, int end_row, int start_column, int end_column )
+void Network::setNetworkWeightsLowerTriangle( double value, int start_row, int end_row, int start_column, int end_column )
 {
 	int i, j, index;
-	
+
 	for(i = start_column; i < end_column; i++) {
 		for(j = start_row; j < end_row ; j++) {
 			if(i > j ){
@@ -417,7 +418,7 @@ Network::setNetworkWeightsLowerTriangle( double value, int start_row, int end_ro
 			}
 		}
 	}
-	
+
 }
 
 
@@ -427,12 +428,12 @@ Network::setNetworkWeightsLowerTriangle( double value, int start_row, int end_ro
 
   a function meant to supply the network outputs to outside process
   NEEDS to check that values passeed are in bounds of the array.
- 
+
 */
-Network::setNetworkWeightsUpperLowerTriangleAndDiagonal( double diagonal_value, double upper_triangle_value, double lower_triangle_value)
+void Network::setNetworkWeightsUpperLowerTriangleAndDiagonal( double diagonal_value, double upper_triangle_value, double lower_triangle_value)
 {
 	int i, j, index;
-	
+
 	for(i = 0; i < networkDimension ; i++) {
 		for(j = 0; j < networkDimension ; j++) {
 			index = networkDimension*i +j;
@@ -441,7 +442,7 @@ Network::setNetworkWeightsUpperLowerTriangleAndDiagonal( double diagonal_value, 
 			if( i == j ) networkWeights[index] = diagonal_value;
 		}
 	}
-	
+
 }
 
 /* --------------------------------------------------
@@ -451,17 +452,17 @@ Network::setNetworkWeightsUpperLowerTriangleAndDiagonal( double diagonal_value, 
 
   a function meant to supply the network outputs to outside process
 
- 
+
 */
-Network::setPlasticWeightsMask( short int value )
+void Network::setPlasticWeightsMask( short int value )
 {
 	int i;
-	
+
 	for(i = 0; i< networkDimension*networkDimension ; ++i) {
 		plasticWeightsMask[i] = value;
-		
+
 	}
-	
+
 
 }
 
@@ -470,15 +471,15 @@ Network::setPlasticWeightsMask( short int value )
 
   setNetworkNeuronActivation
 
- 
+
 */
-Network::setNeuronActivation( double value )
+void Network::setNeuronActivation( double value )
 {
 	int i;
-	
+
 	for(i = 0; i< networkDimension ; ++i) {
 		neuronActivation[i] = value;
-		
+
 	}
 
 }
@@ -487,17 +488,17 @@ Network::setNeuronActivation( double value )
 
   setNetworkNeuronActivation
 
- 
+
 */
-Network::setNeuronOutput( double value )
+void Network::setNeuronOutput( double value )
 {
 	int i;
-	
+
 	for(i = 0; i< networkDimension ; ++i) {
 		neuronOutput[i] = value;
-		
+
 	}
-	
+
 
 }
 
@@ -505,17 +506,17 @@ Network::setNeuronOutput( double value )
 
   setNetworkNeuronThresholds
 
- 
+
 */
-Network::setNeuronThresholds( double value )
+void Network::setNeuronThresholds( double value )
 {
 	int i;
-	
+
 	for(i = 0; i< networkDimension ; ++i) {
 		neuronThresholds[i] = value;
-		
+
 	}
-	
+
 
 }
 
@@ -527,17 +528,17 @@ Network::setNeuronThresholds( double value )
   Negative values should be used with care.
   Typically positive values within the interval [0,1]
 
- 
+
 */
-Network::setNeuronLearningRate( double value )
+void Network::setNeuronLearningRate( double value )
 {
 	int i;
-	
+
 	for(i = 0; i< networkDimension ; ++i) {
 		neuronLearningRate[i] = value;
-		
+
 	}
-	
+
 
 }
 
@@ -550,7 +551,7 @@ Network::setNeuronLearningRate( double value )
   Set to zero for non-refactory neurons
   Must not be negative.   Negative values are set to zero.  !!! SET TO ZERO !!!
   Returns an error of 1 if the refractory state has been changed to zero because a negative value was passed as an argument
-	
+
 */
 int Network::setNeuronRefractoryState( int value )
 {
@@ -560,9 +561,9 @@ int Network::setNeuronRefractoryState( int value )
 		value = 0;
 		error = 1;
 	}
-	
+
 	for(i = 0; i< networkDimension ; ++i) {
-		neuronRefractoryState[i] = value;	
+		neuronRefractoryState[i] = value;
 	}
 
 	return(error);
@@ -579,14 +580,14 @@ int Network::setNeuronRefractoryState( int value )
   Set to zero for non-refactory neurons
   Must not be negative.   Negative values are set to zero.  !!! SET TO ZERO !!!
   Returns an error of 1 if the refractory state has been changed to zero because a negative value was passed as an argument
-	
+
 */
-Network::setNeuronWeightTotal( double value)
+void Network::setNeuronWeightTotal( double value)
 {
 	int i;
-	
+
 	for(i = 0; i< networkDimension ; ++i) {
-		neuronWeightTotal[i] = value;	
+		neuronWeightTotal[i] = value;
 	}
 
 }
@@ -595,16 +596,16 @@ Network::setNeuronWeightTotal( double value)
 
   setNetworkOutputs
 
- 
+
 */
-Network::setNetworkOutputs( double value )
+void Network::setNetworkOutputs( double value )
 {
 	int i;
-	
+
 	for(i = 0; i< numberOfOutputs; ++i) {
 		networkOutputs[i] = value;
 	}
-	
+
 
 }
 
@@ -615,12 +616,12 @@ Network::setNetworkOutputs( double value )
 
   a function meant to supply the network outputs to outside process
 
- 
+
 */
-Network::printNetworkOuput( void )
+void Network::printNetworkOuput( void )
 {
 	int i;
-	
+
 	for(i = 0; i< numberOfOutputs; ++i) {
 		printf("%f ",networkOutputs[i]);
 	}
@@ -634,19 +635,19 @@ Network::printNetworkOuput( void )
 
   a function meant to supply the network outputs to outside process
   thresholds the outputs (no output below or equal to threshold)
-	
-	   
+
+
 	Notes:
 		1. Inputs  should be set separately. This routine does not make use of external input. It uses the current neuron outputs into inputs.
-		The network inputs must be set before calling this routine to get the network to respond to new input 
+		The network inputs must be set before calling this routine to get the network to respond to new input
 		information.
- 
+
 */
-Network::cycleNetwork( void )
+void Network::cycleNetwork( void )
 {
 
 	networkActivation( );						// perform adjusted matrix multiplication of the weights and current network state
-//	setNetworkNeuronOutput( );					// Transform activations into outputs and copy 
+//	setNetworkNeuronOutput( );					// Transform activations into outputs and copy
 	copyNeuronActivationsToNeuronOutputs( );
 	thresholdNeuronOutputs( );					// Transform activations into outputs following hard threshold
 	setNetworkOuput( );							// Copy the network output to the output array *+* consider moving this call out of the function to allow network "settling time" before external functions have access to the network output
@@ -660,21 +661,21 @@ Network::cycleNetwork( void )
 
   cycleNetworkSquash( double offset=0, double expSlope=1  )
 
-  a function meant to supply the network outputs to outside process 
+  a function meant to supply the network outputs to outside process
   squashes the outputs
-	
-	   
+
+
 	Notes:
 		1. Inputs  should be set separately. This routine does not make use of external input. It uses the current neuron outputs into inputs.
-		The network inputs must be set before calling this routine to get the network to respond to new input 
+		The network inputs must be set before calling this routine to get the network to respond to new input
 		information.
- 
+
 */
-Network::cycleNetworkSquash(  double offset=0, double expSlope=1 )
+void Network::cycleNetworkSquash(  double offset=0, double expSlope=1 )
 {
 
 	networkActivation( );						// perform adjusted matrix multiplication of the weights and current network state
-//	setNetworkNeuronOutput( );					// Transform activations into outputs and copy 
+//	setNetworkNeuronOutput( );					// Transform activations into outputs and copy
 	copyNeuronActivationsToNeuronOutputs( );
 	squashNeuronOutputs(offset,expSlope );					// Transform activations into outputs following hard threshold
 	setNetworkOuput( );							// Copy the network output to the output array *+* consider moving this call out of the function to allow network "settling time" before external functions have access to the network output
@@ -688,7 +689,7 @@ Network::cycleNetworkSquash(  double offset=0, double expSlope=1 )
 
 
 
-Network::cycleNetworkNormalizeHebbianLearning( void )
+void Network::cycleNetworkNormalizeHebbianLearning( void )
 {
 /* *+*  */
 	hebbianExcitatoryWeightUpdate( );
@@ -700,24 +701,24 @@ Network::cycleNetworkNormalizeHebbianLearning( void )
 	hebbianWeightUpdate
 
   NOTE: weight updates will only occur if the weights are marked as plastic and if the neuron has a non-zero learning rate
-  Both these parameters must agree.  If the learning rate is zero there will be no update for that neuron.  
+  Both these parameters must agree.  If the learning rate is zero there will be no update for that neuron.
   If the plastic weights mask is zero there will be no weight update for that weight.
 
   NOTE: The weight changes effected by this routine will cause the values of the weights to grow.  Over many cycles they will grow without  bound.
   Some form of normalization or negative weights need to be used to offset this unbounded weight growth if the network is to be stable
 
   */
-Network::hebbianWeightUpdate( void  )
+void Network::hebbianWeightUpdate( void  )
 {
 	int source_neuron_number, target_neuron_number, weight_index;
 	double weight_increment;
-	
+
 	for( target_neuron_number = 0; target_neuron_number < networkDimension; ++target_neuron_number){
 		if(neuronLearningRate[target_neuron_number] !=0){ // save clock cyles by only computing updates on weights that are plastic.
 			for( source_neuron_number = 0; source_neuron_number < networkDimension; ++source_neuron_number){
 				weight_increment = 0;
 				weight_index = computeWeightIndex( source_neuron_number, target_neuron_number );
-				weight_increment = neuronLearningRate[target_neuron_number]*neuronOutput[source_neuron_number]*neuronOutput[target_neuron_number]*plasticWeightsMask[weight_index];  // remember that the plastic weights mask AND the learning rate for a neuron must agree ( both be non-zero) for a neuron to have adaptive weights		
+				weight_increment = neuronLearningRate[target_neuron_number]*neuronOutput[source_neuron_number]*neuronOutput[target_neuron_number]*plasticWeightsMask[weight_index];  // remember that the plastic weights mask AND the learning rate for a neuron must agree ( both be non-zero) for a neuron to have adaptive weights
 				networkWeights[weight_index] += weight_increment;
 			}
 
@@ -731,18 +732,18 @@ Network::hebbianWeightUpdate( void  )
   Same as hebbianWeightUpdate but applied only to positive valued weights
 
   NOTE: weight updates will only occur if the weights are marked as plastic and if the neuron has a non-zero learning rate
-  Both these parameters must agree.  If the learning rate is zero there will be no update for that neuron.  
+  Both these parameters must agree.  If the learning rate is zero there will be no update for that neuron.
   If the plastic weights mask is zero there will be no weight update for that weight.
 
   NOTE: The weight changes effected by this routine will cause the values of the weights to grow.  Over many cycles they will grow without  bound.
   Some form of normalization or negative weights need to be used to offset this unbounded weight growth if the network is to be stable
 
   */
-Network::hebbianExcitatoryWeightUpdate( void )
+void Network::hebbianExcitatoryWeightUpdate( void )
 {
 	int source_neuron_number, target_neuron_number, weight_index;
 	double weight_increment;
-	
+
 	for( target_neuron_number = 0; target_neuron_number < networkDimension; ++target_neuron_number){
 		if(neuronLearningRate[target_neuron_number] !=0){ // save clock cyles by only computing updates on weights that are plastic.
 			for( source_neuron_number = 0; source_neuron_number < networkDimension; ++source_neuron_number){
@@ -750,7 +751,7 @@ Network::hebbianExcitatoryWeightUpdate( void )
 				weight_index = computeWeightIndex( source_neuron_number, target_neuron_number );
 				if( networkWeights[weight_index] > 0 ){
 
-					weight_increment = neuronLearningRate[target_neuron_number]*neuronOutput[source_neuron_number]*neuronOutput[target_neuron_number]*plasticWeightsMask[weight_index];  // remember that the plastic weights mask AND the learning rate for a neuron must agree ( both be non-zero) for a neuron to have adaptive weights		
+					weight_increment = neuronLearningRate[target_neuron_number]*neuronOutput[source_neuron_number]*neuronOutput[target_neuron_number]*plasticWeightsMask[weight_index];  // remember that the plastic weights mask AND the learning rate for a neuron must agree ( both be non-zero) for a neuron to have adaptive weights
 					networkWeights[weight_index] += weight_increment;
 				}
 			}
@@ -768,26 +769,26 @@ Network::hebbianExcitatoryWeightUpdate( void )
   This function DECREMENTS the weights, making them more negative
 
   NOTE: weight updates will only occur if the weights are marked as plastic and if the neuron has a non-zero learning rate
-  Both these parameters must agree.  If the learning rate is zero there will be no update for that neuron.  
+  Both these parameters must agree.  If the learning rate is zero there will be no update for that neuron.
   If the plastic weights mask is zero there will be no weight update for that weight.
 
   NOTE: The weight changes effected by this routine will cause the values of the weights to grow.  Over many cycles they will grow without  bound.
   Some form of normalization or negative weights need to be used to offset this unbounded weight growth if the network is to be stable
 
   */
-Network::hebbianInhibitoryWeightUpdate( void )
+void Network::hebbianInhibitoryWeightUpdate( void )
 {
 	int source_neuron_number, target_neuron_number, weight_index;
 	double weight_increment;
-	
+
 	for( target_neuron_number = 0; target_neuron_number < networkDimension; ++target_neuron_number){
 		if(neuronLearningRate[target_neuron_number] !=0){ // save clock cyles by only computing updates on weights that are plastic.
 			for( source_neuron_number = 0; source_neuron_number < networkDimension; ++source_neuron_number){
 				weight_increment = 0;
 				weight_index = computeWeightIndex( source_neuron_number, target_neuron_number );
 				if( networkWeights[weight_index] < 0 ){
-//					weight_increment = neuronLearningRate[target_neuron_number]*neuronOutput[source_neuron_number]*plasticWeightsMask[weight_index];  // remember that the plastic weights mask AND the learning rate for a neuron must agree ( both be non-zero) for a neuron to have adaptive weights		
-					weight_increment = neuronLearningRate[target_neuron_number]*neuronOutput[source_neuron_number]*neuronOutput[target_neuron_number]*plasticWeightsMask[weight_index];  // remember that the plastic weights mask AND the learning rate for a neuron must agree ( both be non-zero) for a neuron to have adaptive weights		
+//					weight_increment = neuronLearningRate[target_neuron_number]*neuronOutput[source_neuron_number]*plasticWeightsMask[weight_index];  // remember that the plastic weights mask AND the learning rate for a neuron must agree ( both be non-zero) for a neuron to have adaptive weights
+					weight_increment = neuronLearningRate[target_neuron_number]*neuronOutput[source_neuron_number]*neuronOutput[target_neuron_number]*plasticWeightsMask[weight_index];  // remember that the plastic weights mask AND the learning rate for a neuron must agree ( both be non-zero) for a neuron to have adaptive weights
 
 					networkWeights[weight_index] -= weight_increment;  // Note that this DECREMENTS the weight
 				}
@@ -799,26 +800,26 @@ Network::hebbianInhibitoryWeightUpdate( void )
 /*
 	normalizeNeuronWeights
 
-	Computes the sume of the weights for a given neuron.  
+	Computes the sume of the weights for a given neuron.
 	Then make a proportional change in the weights of that neuron so that it sums to the passed value.
 
   */
-Network::normalizeNeuronWeights( double value )
+void Network::normalizeNeuronWeights( double value )
 {
 	int source_neuron_number, target_neuron_number, weight_index;
 	double weight_sum;
-	
+
 	for( target_neuron_number = 0; target_neuron_number < networkDimension; ++target_neuron_number){
 		weight_sum = 0.0;
 		for( source_neuron_number = 0; source_neuron_number < networkDimension; ++source_neuron_number){
-			weight_index = computeWeightIndex( source_neuron_number,  target_neuron_number ); 
-//			weight_index = networkDimension*target_neuron_number + source_neuron_number; 
+			weight_index = computeWeightIndex( source_neuron_number,  target_neuron_number );
+//			weight_index = networkDimension*target_neuron_number + source_neuron_number;
 			if(networkWeights[weight_index] >0) weight_sum += networkWeights[weight_index];
-			if(networkWeights[weight_index] <0) weight_sum = weight_sum - networkWeights[weight_index];	
+			if(networkWeights[weight_index] <0) weight_sum = weight_sum - networkWeights[weight_index];
 		}
 		for( source_neuron_number = 0; source_neuron_number < networkDimension; ++source_neuron_number){
-			weight_index = computeWeightIndex(  source_neuron_number, target_neuron_number ); 
-//			weight_index = networkDimension*target_neuron_number + source_neuron_number; 			weight_index = networkDimension*source_neuron_number + target_neuron_number; 
+			weight_index = computeWeightIndex(  source_neuron_number, target_neuron_number );
+//			weight_index = networkDimension*target_neuron_number + source_neuron_number; 			weight_index = networkDimension*source_neuron_number + target_neuron_number;
 			networkWeights[weight_index] = value*( networkWeights[weight_index]/weight_sum);
 		}
 	}
@@ -829,7 +830,7 @@ Network::normalizeNeuronWeights( double value )
 /*
 	normalizeNeuronWeights
 
-	Computes the sume of the weights for a given neuron.  
+	Computes the sume of the weights for a given neuron.
 	Then make a proportional change in the weights of that neuron so that it sums to the passed value.
 
 	This version preserves the weight total found in a given unit's wieghts.  The function normalizeNeuronWeights( double ) sets them to a user specificed value
@@ -837,11 +838,11 @@ Network::normalizeNeuronWeights( double value )
 	This function use the sum of the absolute value of each weight to determine the normalization value. (Negative weights are inverted in sign before they are summed).
 
   */
-Network::normalizeNeuronWeights( void )
+void Network::normalizeNeuronWeights( void )
 {
 	int source_neuron_number, target_neuron_number, weight_index;
 	double weight_sum;
-	
+
 	for( target_neuron_number = 0; target_neuron_number < networkDimension; ++target_neuron_number){
 		weight_sum = 0.0;
 		for( source_neuron_number = 0; source_neuron_number < networkDimension; ++source_neuron_number){
@@ -860,19 +861,19 @@ Network::normalizeNeuronWeights( void )
 /*
 	normalizeNonDiagonalNeuronWeights
 
-	Computes the sume of the weights for a given neuron.  
+	Computes the sume of the weights for a given neuron.
 	Then make a proportional change in the weights of that neuron so that it sums to the passed value.
 	It does not update weights that are autapses.  self connections along the network diagonal.
 
 	This function leaves the weight matrix diagonals ( autapses ) unchanged. And it does not use them in the calculations.
 
 
-  */ 
-Network::normalizeNonDiagonalNeuronWeights( void )
+  */
+void Network::normalizeNonDiagonalNeuronWeights( void )
 {
 	int source_neuron_number, target_neuron_number, weight_index;
 	double weight_sum;
-	
+
 	for( target_neuron_number = 0; target_neuron_number < networkDimension; ++target_neuron_number){
 		weight_sum = 0.0;
 		for( source_neuron_number = 0; source_neuron_number < networkDimension; ++source_neuron_number){
@@ -895,19 +896,19 @@ Network::normalizeNonDiagonalNeuronWeights( void )
 /*
 	normalizeNonDiagonalExcitatoryNeuronWeights
 
-	Computes the sume of the weights for a given neuron.  
+	Computes the sume of the weights for a given neuron.
 	Then make a proportional change in the weights of that neuron so that it sums to the passed value.
 	It does not update weights that are autapses.  self connections along the network diagonal.
 
 	This function leaves the weight matrix diagonals ( autapses ) unchanged. And it does not use them in the calculations.
 
 
-  */ 
-Network::normalizeNonDiagonalExcitatoryNeuronWeights( void )
+  */
+void Network::normalizeNonDiagonalExcitatoryNeuronWeights( void )
 {
 	int source_neuron_number, target_neuron_number, weight_index;
 	double weight_sum;
-	
+
 	for( target_neuron_number = 0; target_neuron_number < networkDimension; ++target_neuron_number){
 		weight_sum = 0.0;
 		for( source_neuron_number = 0; source_neuron_number < networkDimension; ++source_neuron_number){
@@ -928,7 +929,7 @@ Network::normalizeNonDiagonalExcitatoryNeuronWeights( void )
 /*
 	normalizeNonDiagonalExcitatoryNeuronWeights
 
-	Computes the sume of the weights for a given neuron.  
+	Computes the sume of the weights for a given neuron.
 	Then make a proportional change in the weights of that neuron so that it sums to the passed value.
 	It does not update weights that are autapses.  self connections along the network diagonal.
 
@@ -936,13 +937,13 @@ Network::normalizeNonDiagonalExcitatoryNeuronWeights( void )
 
 
 
-  */ 
-Network::normalizeNonDiagonalInhibitoryNeuronWeights( void )
+  */
+void Network::normalizeNonDiagonalInhibitoryNeuronWeights( void )
 {
 
 	int source_neuron_number, target_neuron_number, weight_index;
 	double weight_sum;
-	
+
 	for( target_neuron_number = 0; target_neuron_number < networkDimension; ++target_neuron_number){
 		weight_sum = 0.0;
 		for( source_neuron_number = 0; source_neuron_number < networkDimension; ++source_neuron_number){
@@ -972,15 +973,17 @@ readNetworkFromFile
    returns an error message 1 if there was an error, 0 if there was no error on file open.
 
 */
-int Network::readNetworkFromFile( char * file_name )
+int Network::readNetworkFromFile(char * file_name )
 {
-	int i, item_count = 0, error = 0;
+	printf("Reading file %s ...\n", file_name);
+	int i, error = 0;
 	char dummy[MAX_DUMMY_STRING_LENGTH];
 	FILE *fp;
-	fp= fopen(file_name,"r");
-	if( fp == 0) error = 1;
+	fp = fopen(file_name,"r");
+	if (fp == NULL) error = 1;
 	else{
 		fscanf(fp,"%s %d",&dummy, &numberOfInputs);
+		printf("Number of inputs: %d", numberOfInputs);
 		fscanf(fp,"%s %d",&dummy, &numberOfOutputs);
 		fscanf(fp,"%s %d",&dummy, &numberOfInterNeurons);
 		fscanf(fp,"%s %d",&dummy, &networkDimension); // perhaps networkDimension should be omitted from the Read and computed on the read or in the constructor
@@ -1021,11 +1024,11 @@ int Network::readNetworkFromFile( char * file_name )
 	fclose(fp);
 	return(error);
 }
-	
+
 /* --------------------------------------------------
 
 writeNetworkToFile
-  
+
 	takes as input a file name
    writes the file to be formatted according to the standard network form
    changes to this should be mirrored in readNetworkFromFile
@@ -1074,7 +1077,7 @@ int Network::writeNetworkToFile( char * file_name )
 		for( i = 0 ; i < networkDimension*networkDimension; ++i){
 			fprintf(fp,"%lf ",networkWeights[i]);
 			++item_count;
-			if(item_count == networkDimension){  
+			if(item_count == networkDimension){
 				fprintf(fp,"\n");       // place a new line after each row printed to make reading of the output file intuitive
 				item_count = 0;
 			}
@@ -1110,13 +1113,13 @@ int Network::writeNetworkToFile( char * file_name )
 /* --------------------------------------------------
 
 writeNetworkActivationStateToFile
-  
+
 	takes as input a file name
    writes the file to be formatted according to the standard network form
    changes to this should be mirrored in readNetworkFromFile
- 
+
 */
-Network::writeNetworkActivationStateToFile( char * file_name )
+void Network::writeNetworkActivationStateToFile( char * file_name )
 {
 	int i;
 	FILE *fp;
@@ -1135,13 +1138,13 @@ Network::writeNetworkActivationStateToFile( char * file_name )
 /* --------------------------------------------------
 
 writeNetworkOutputToFile
-  
+
 	takes as input a file name
    writes the file to be formatted according to the standard network form
    changes to this should be mirrored in readNetworkFromFile
 
 */
-Network::writeNetworkOutputStateToFile( char * file_name )
+void Network::writeNetworkOutputStateToFile( char * file_name )
 {
 	int i;
 	FILE *fp;
@@ -1161,21 +1164,21 @@ Network::writeNetworkOutputStateToFile( char * file_name )
 /* --------------------------------------------------
 
 writeNetworkActivationStateToFile
-  
+
 	takes as input a file name
    writes the file to be formatted according to the standard network form
    changes to this should be mirrored in readNetworkFromFile
- 
+
 */
-Network::writeNetworkWeightsToFile( char * file_name )
+void Network::writeNetworkWeightsToFile( char * file_name )
 {
 	int source_neuron_number, target_neuron_number, weight_index;
 	FILE *fp;
 	fp= fopen(file_name,"a");
 
-	fprintf(fp," | "); // pretty printing to delinate the start of a print of the weight set 
+	fprintf(fp," | "); // pretty printing to delinate the start of a print of the weight set
 
-	for( target_neuron_number = 0; target_neuron_number < networkDimension; ++target_neuron_number){	
+	for( target_neuron_number = 0; target_neuron_number < networkDimension; ++target_neuron_number){
 		for( source_neuron_number = 0; source_neuron_number < networkDimension; ++source_neuron_number){
 
 		weight_index = computeWeightIndex(source_neuron_number, target_neuron_number);
@@ -1193,13 +1196,13 @@ Network::writeNetworkWeightsToFile( char * file_name )
 /* --------------------------------------------------
 
 writeNetworkOutputToFile
-  
+
 	takes as input a file name
    writes the file to be formatted according to the standard network form
    changes to this should be mirrored in readNetworkFromFile
 
 */
-Network::printNetworkOutputState( void )
+void Network::printNetworkOutputState( void )
 {
 	int i;
 
@@ -1215,7 +1218,7 @@ Network::printNetworkOutputState( void )
 /* --------------------------------------------------
 
 writeNetworkOutputToFile
-  
+
 	takes as input a file name
    writes the file to be formatted according to the standard network form
    changes to this should be mirrored in readNetworkFromFile
