@@ -104,7 +104,19 @@ void Network::PrintNetworkState( void )
 	printf(" Number of outputs: %d\n",numberOfOutputs);
 	printf(" Number of interneuorns: %d\n",numberOfInterNeurons);
 	printf(" Network Dimension: %d\n",networkDimension);
+
+    printf(" Network weights:\n");
+    int item_count = 0;
+    for (int i = 0 ; i < networkDimension*networkDimension; ++i) {
+        printf("% .2f ", networkWeights[i]);
+        ++item_count;
+        if (item_count == networkDimension) {
+            printf("\n");
+            item_count = 0;
+        }
+    }
 }
+
 
 /* --------------------------------------------------
 

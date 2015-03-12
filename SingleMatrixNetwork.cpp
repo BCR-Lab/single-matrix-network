@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 	Network fred(file_name);
 
 	fred.PrintNetworkState();
-
+	printf("\n");
 
 	// Initialize the weights to produce a test recurrent network
 /*
@@ -47,8 +47,9 @@ int main(int argc, char* argv[])
 
 	fred.writeNetworkOutputStateToFile( "output_squash.txt" );
 
+	printf("*** Begin network learning ***\n");
 	i = 0;
-	while( i < 100 ){
+	while( i < 10 ){
 		//-----------------------------------------------------------
 		for(j = 0; j < 6; ++j ){	// temporary input function (STEP RESPONSE)
 			input[j]  =  sin((i + j*3)*0.1);
@@ -63,6 +64,7 @@ int main(int argc, char* argv[])
 		fred.cycleNetworkNormalizeHebbianLearning();
 
 //		fred.printNetworkOuput();
+		printf("t=%03d: ", i);
 		fred.printNetworkOutputState( );
 
 		fred.writeNetworkOutputStateToFile( "output_squash.txt" );
@@ -71,6 +73,10 @@ int main(int argc, char* argv[])
 		fred.writeNetworkWeightsToFile("weights.txt");
 		++i;
 	}
+	printf("*** End network learning ***\n");
+
+	printf("\nFinal weights:\n");
+	fred.PrintNetworkState();
 
 	//Test the read-write fucntions -------------
 	fred.writeNetworkToFile("temp.txt");
