@@ -983,7 +983,6 @@ int Network::readNetworkFromFile(char * file_name )
 	if (fp == NULL) error = 1;
 	else{
 		fscanf(fp,"%s %d",&dummy, &numberOfInputs);
-		printf("Number of inputs: %d", numberOfInputs);
 		fscanf(fp,"%s %d",&dummy, &numberOfOutputs);
 		fscanf(fp,"%s %d",&dummy, &numberOfInterNeurons);
 		fscanf(fp,"%s %d",&dummy, &networkDimension); // perhaps networkDimension should be omitted from the Read and computed on the read or in the constructor
