@@ -15,7 +15,17 @@ int main(int argc, char* argv[])
 //	ted.writeNetworkToFile("this_is_mine.txt");
 
 //	Network fred;
-	Network fred("ganglia5.txt");
+
+//	Network fred("ganglia5.txt");
+
+	char* file_name;
+    if (argc < 2) {
+		file_name = "ganglia5.txt";
+	} else {
+		file_name = argv[1];
+	}
+
+	Network fred(file_name);
 
 	fred.PrintNetworkState();
 
