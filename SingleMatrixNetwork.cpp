@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 
 	printf("*** Begin network learning ***\n");
 	i = 0;
-	while( i < 10 ){
+	while( i < 20 ){
 		//-----------------------------------------------------------
 		for(j = 0; j < 6; ++j ){	// temporary input function (STEP RESPONSE)
 //			input[j]  =  sin((i + j*3)*0.1);
