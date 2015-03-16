@@ -814,17 +814,18 @@ void Network::hebbianExcitatoryWeightUpdate( void )
 				if( networkWeights[weight_index] > 0 ){
 
 					weight_increment = neuronLearningRate[target_neuron_number]*neuronOutput[source_neuron_number]*neuronOutput[target_neuron_number]*plasticWeightsMask[weight_index];  // remember that the plastic weights mask AND the learning rate for a neuron must agree ( both be non-zero) for a neuron to have adaptive weights
-                    fprintf(logFile, "  increment = learning_rate(%.2f) * source_output(%.2f) * target_output(%.2f) * mask(%d)\n",
+                    fprintf(logFile, "weight[%d,%d](%.2f) += learning_rate(%.2f) * output[%d](%.2f) * output[%d](%.2f) * mask(%d)",
+							source_neuron_number, target_neuron_number,
+							networkWeights[weight_index],
                            neuronLearningRate[target_neuron_number],
+							source_neuron_number,
                            neuronOutput[source_neuron_number],
+							target_neuron_number,
                            neuronOutput[target_neuron_number],
-                           plasticWeightsMask[weight_index]);
-                    fprintf(logFile, "weight[%d,%d] = weight[%d,%d](%.2f) + increment(%.2f)",
-                           source_neuron_number, target_neuron_number,
-                           source_neuron_number, target_neuron_number,
-                           networkWeights[weight_index], weight_increment);
+                           plasticWeightsMask[weight_index],
+							weight_increment);
 					networkWeights[weight_index] += weight_increment;
-                    fprintf(logFile, " => %.2f\n", networkWeights[weight_index]);
+                    fprintf(logFile, "  => %.2f\n", networkWeights[weight_index]);
 				}
 			}
 
