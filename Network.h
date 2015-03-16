@@ -97,6 +97,7 @@ public:
 	int writeNetworkToFile( char * file_name );
 	void setNetworkWeights( double value );
 	void PrintNetworkState( void);
+	void printNetworkWeights();
 
 };
 
