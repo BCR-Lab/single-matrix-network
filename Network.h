@@ -9,6 +9,9 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+// For FILE
+#include <stdio.h>
+
 #define MAX_NET_DIMENSION 100
 #define MAX_NET_INPUTS 10		// Cannot exceed the size of the net
 #define MAX_NET_OUTPUTS 10		// Cannot exceed the size of the net
@@ -41,8 +44,12 @@ private:
 	double networkInputs[MAX_NET_INPUTS];
 	double networkOutputs[MAX_NET_OUTPUTS];
 	short int  plasticWeightsMask[MAX_NET_DIMENSION*MAX_NET_DIMENSION]; // a filter. Plastic weights are = 1, fixed = 0. THis allows for the specification of some fixed and some plastic weights in the same neuron. This could be a binary array ( type bool) to save space.
+    const char* logFileName = "/tmp/log.txt";
+    FILE* logFile;
 
 	// Functions -------------------------
+	bool openLogFile();
+	void closeLogFile();
 
 	void instantiateDefaultNetwork( void );
 	void setNetworkOuput( void );
