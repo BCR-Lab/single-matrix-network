@@ -77,7 +77,7 @@ Network::~Network()
 
 bool Network::openLogFile()
 {
-    logFile = fopen(logFileName, "w");
+    logFile = fopen("log.txt", "w");
 	return logFile != NULL;
 }
 
@@ -125,15 +125,16 @@ void Network::printNetworkWeights() {
 	printf(" Network weights:\n");
 	int item_count = 0;
 	printf("  ");
-	for (int i = 0 ; i < networkDimension; ++i)	{
+	int i;
+	for (i = 0 ; i < networkDimension; ++i)	{
 		printf("    %2d", i);
 	}
 	printf("\n  ");
-	for (int i = 0 ; i < networkDimension; ++i)	{
+	for (i = 0 ; i < networkDimension; ++i)	{
 		printf("------");
 	}
 	printf("\n");
-	for (int i = 0 ; i < networkDimension*networkDimension; ++i) {
+	for (i = 0 ; i < networkDimension*networkDimension; ++i) {
 		if (item_count == 0) {
 			printf("%2d|", i / networkDimension);
 		}

@@ -44,7 +44,6 @@ private:
 	double networkInputs[MAX_NET_INPUTS];
 	double networkOutputs[MAX_NET_OUTPUTS];
 	short int  plasticWeightsMask[MAX_NET_DIMENSION*MAX_NET_DIMENSION]; // a filter. Plastic weights are = 1, fixed = 0. THis allows for the specification of some fixed and some plastic weights in the same neuron. This could be a binary array ( type bool) to save space.
-    const char* logFileName = "/tmp/log.txt";
     FILE* logFile;
 
 	// Functions -------------------------
