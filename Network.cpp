@@ -127,7 +127,7 @@ void Network::printNetworkWeights() {
 	printf("  ");
 	int i;
 	for (i = 0 ; i < networkDimension; ++i)	{
-		printf("    %2d", i);
+		printf("    %2d", i + 1);
 	}
 	printf("\n  ");
 	for (i = 0 ; i < networkDimension; ++i)	{
@@ -136,7 +136,7 @@ void Network::printNetworkWeights() {
 	printf("\n");
 	for (i = 0 ; i < networkDimension*networkDimension; ++i) {
 		if (item_count == 0) {
-			printf("%2d|", i / networkDimension);
+			printf("%2d|", (i / networkDimension) + 1);
 		}
 		printf("% .2f ", networkWeights[i]);
 		++item_count;
