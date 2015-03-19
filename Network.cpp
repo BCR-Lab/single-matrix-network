@@ -115,7 +115,7 @@ void Network::PrintNetworkState( void )
 {
 	printf(" Number of inputs: %d\n",numberOfInputs);
 	printf(" Number of outputs: %d\n",numberOfOutputs);
-	printf(" Number of interneuorns: %d\n",numberOfInterNeurons);
+	printf(" Number of interneurons: %d\n",numberOfInterNeurons);
 	printf(" Network Dimension: %d\n",networkDimension);
 	printNetworkWeights();
 }
