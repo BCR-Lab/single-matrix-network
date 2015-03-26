@@ -58,6 +58,15 @@ Network::Network(int inputs, int interneurons, int outputs, char * out_file_name
 	writeNetworkToFile( out_file_name );
 }
 
+Network::Network(std::string file_name) {
+	openLogFile();
+	int error = 0;
+
+	error = readNetworkFromFile( file_name );  // This function should return an error message for an improperly specified network.
+//	setNetworkNeuronActivation( 0.0 );
+	if(error == 1)	printf("Bad Network file specification in file %s.\n", file_name);  // if the file is bad print a warning
+}
+/*
 // This constructor Assumes a properly formatted data file.  It does no checking or corrections.
 Network::Network( char * file_name )
 {
@@ -68,7 +77,7 @@ Network::Network( char * file_name )
 //	setNetworkNeuronActivation( 0.0 );
 	if(error == 1)	printf("Bad Network file specification in file %s.\n", file_name);  // if the file is bad print a warning
 }
-
+*/
 
 Network::~Network()
 {
@@ -77,6 +86,7 @@ Network::~Network()
 
 bool Network::openLogFile()
 {
+	printf("opening log file...\n");
     logFile = fopen("log.txt", "w");
 	return logFile != NULL;
 }
@@ -1054,13 +1064,13 @@ readNetworkFromFile
    returns an error message 1 if there was an error, 0 if there was no error on file open.
 
 */
-int Network::readNetworkFromFile(char * file_name )
+int Network::readNetworkFromFile( std::string file_name )
 {
-    printf("Reading file %s\n", file_name);
+    printf("Reading file %s\n", file_name.c_str());
 	int i, error = 0;
 	char dummy[MAX_DUMMY_STRING_LENGTH];
 	FILE *fp;
-	fp = fopen(file_name,"r");
+	fp = fopen(file_name.c_str(),"r");
 	if (fp == NULL) error = 1;
 	else{
 		fscanf(fp,"%s %d",&dummy, &numberOfInputs);
@@ -1114,11 +1124,11 @@ writeNetworkToFile
    changes to this should be mirrored in readNetworkFromFile
 
 */
-int Network::writeNetworkToFile( char * file_name )
+int Network::writeNetworkToFile( std::string file_name )
 {
 	int i, item_count = 0, error = 0;
 	FILE *fp;
-	fp= fopen(file_name,"w");
+	fp= fopen(file_name.c_str(),"w");
 
 	if( fp == 0) error = 1;
 	else{
@@ -1199,11 +1209,11 @@ writeNetworkActivationStateToFile
    changes to this should be mirrored in readNetworkFromFile
 
 */
-void Network::writeNetworkActivationStateToFile( char * file_name )
+void Network::writeNetworkActivationStateToFile( std::string file_name )
 {
 	int i;
 	FILE *fp;
-	fp= fopen(file_name,"a");
+	fp= fopen(file_name.c_str(),"a");
 
 	for( i=0 ; i < networkDimension; ++i){
 
@@ -1224,12 +1234,12 @@ writeNetworkOutputToFile
    changes to this should be mirrored in readNetworkFromFile
 
 */
-void Network::writeNetworkOutputStateToFile( char * file_name )
+void Network::writeNetworkOutputStateToFile( std::string file_name )
 {
 	int i;
 	FILE *fp;
 
-	fp= fopen(file_name,"a");
+	fp= fopen(file_name.c_str(),"a");
 
 	for( i=0 ; i < networkDimension; ++i){
 
@@ -1250,11 +1260,11 @@ writeNetworkActivationStateToFile
    changes to this should be mirrored in readNetworkFromFile
 
 */
-void Network::writeNetworkWeightsToFile( char * file_name )
+void Network::writeNetworkWeightsToFile( std::string file_name )
 {
 	int source_neuron_number, target_neuron_number, weight_index;
 	FILE *fp;
-	fp= fopen(file_name,"a");
+	fp= fopen(file_name.c_str(),"a");
 
 	fprintf(fp," | "); // pretty printing to delinate the start of a print of the weight set
 

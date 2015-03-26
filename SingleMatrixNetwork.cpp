@@ -5,6 +5,8 @@
 #include "Network.h"
 #include <math.h>
 #include <stdio.h>
+#include <string>
+#include <string.h>
 
 int main(int argc, char* argv[])
 {
@@ -18,7 +20,8 @@ int main(int argc, char* argv[])
 
 //	Network fred("ganglia5.txt");
 
-	char* file_name;
+	std::string file_name;
+	//char* file_name;
     if (argc < 2) {
 		file_name = "ganglia5.txt";
 	} else {
@@ -26,6 +29,7 @@ int main(int argc, char* argv[])
 	}
 
 	Network fred(file_name);
+
 
 	fred.PrintNetworkState();
 	printf("\n");
@@ -67,20 +71,16 @@ int main(int argc, char* argv[])
 		printf("t=%03d: ", i);
 		fred.printNetworkOutputState( );
 
-		fred.writeNetworkOutputStateToFile( "output_squash.txt" );
+		fred.writeNetworkOutputStateToFile(file_name + "-output_squash.txt");
 
-		fred.writeNetworkToFile("ganglia3.txt");
-		fred.writeNetworkWeightsToFile("weights.txt");
+		fred.writeNetworkToFile(file_name + ".out");
+		fred.writeNetworkWeightsToFile(file_name + "-weights.txt");
 		++i;
 	}
 	printf("*** End network learning ***\n");
 
 	printf("\nFinal weights:\n");
 	fred.PrintNetworkState();
-
-	//Test the read-write fucntions -------------
-	fred.writeNetworkToFile("temp.txt");
-//	fred.readNetworkFromFile("temp.txt");
 
 	return 0;
 }

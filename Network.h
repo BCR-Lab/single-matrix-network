@@ -12,6 +12,8 @@
 // For FILE
 #include <stdio.h>
 
+#include <string>
+
 #define MAX_NET_DIMENSION 100
 #define MAX_NET_INPUTS 10		// Cannot exceed the size of the net
 #define MAX_NET_OUTPUTS 10		// Cannot exceed the size of the net
@@ -21,7 +23,7 @@ class Network
 {
 public:
 	Network();								// default network constructor.
-	Network( char * file_name );	// Construct the network from a stored file.
+	Network( std::string file_name );	// Construct the network from a stored file.
 	Network(int inputs, int interneurons, int outputs, char * file_name ); // construct a blank network to user specified size and write it to a file for later editing
 	virtual ~Network();
 
@@ -87,13 +89,13 @@ public:
 	void setNetworkWeightsRectangle( double value, int start_row, int end_row, int start_column, int end_column );
 	void setNetworkWeightsUpperTriangle( double value, int start_row, int end_row, int start_column, int end_column );
 	void setNetworkWeightsLowerTriangle( double value, int start_row, int end_row, int start_column, int end_column );
-	void writeNetworkOutputStateToFile( char * file_name );
-	void writeNetworkActivationStateToFile( char * file_name );
-	void writeNetworkWeightsToFile( char * file_name );
+	void writeNetworkOutputStateToFile( std::string file_name );
+	void writeNetworkActivationStateToFile( std::string file_name );
+	void writeNetworkWeightsToFile( std::string file_name );
 	void setNetworkInput( double *vector);
 	void getNetworkOuput( double * vector );
-	int readNetworkFromFile( char * file_name );
-	int writeNetworkToFile( char * file_name );
+	int readNetworkFromFile( std::string file_name);
+	int writeNetworkToFile( std::string file_name );
 	void setNetworkWeights( double value );
 	void PrintNetworkState( void);
 	void printNetworkWeights();
