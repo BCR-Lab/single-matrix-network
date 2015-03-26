@@ -64,7 +64,7 @@ Network::Network(std::string file_name) {
 
 	error = readNetworkFromFile( file_name );  // This function should return an error message for an improperly specified network.
 //	setNetworkNeuronActivation( 0.0 );
-	if(error == 1)	printf("Bad Network file specification in file %s.\n", file_name);  // if the file is bad print a warning
+	if(error == 1)	printf("Bad Network file specification in file %s.\n", file_name.c_str());  // if the file is bad print a warning
 }
 /*
 // This constructor Assumes a properly formatted data file.  It does no checking or corrections.
@@ -168,10 +168,12 @@ void Network::printNetworkWeights() {
 
 void Network::networkActivation( void  )
 {
+	fprintf(logFile, "1. networkActivation()\n");
 	int neuron_number, source_neuron_number, k;
 
 	// -----------------  Compute intrinsic network activations
 
+	fprintf(logFile, "  a. Update autapses\n");
 	// -- Update autapses
 	for( neuron_number = 0; neuron_number < networkDimension; ++neuron_number){
 
@@ -1052,6 +1054,33 @@ void Network::normalizeNonDiagonalInhibitoryNeuronWeights( void )
 	}
 }
 
+/*
+ Read the values from the file at the given file pointer and set each one into
+ the appropriate array index. If a value is not found in the file, set it to the given
+ default value
+ */
+void Network::readRowFromFile(FILE* fp, short* array, short defaultVal) {
+	for( int i = 0 ; i < networkDimension; ++i) {
+		int items = fscanf(fp,"%lf",&array[i]);
+		if (items == 0) {
+			array[i] = defaultVal;
+		}
+	}
+}
+
+/*
+ Read the values from the file at the given file pointer and set each one into
+ the appropriate array index. If a value is not found in the file, set it to the given
+ default value
+ */
+void Network::readRowFromFile(FILE* fp, double* array, double defaultVal) {
+	for( int i = 0 ; i < networkDimension; ++i) {
+		int items = fscanf(fp,"%lf",&array[i]);
+		if (items == 0) {
+			array[i] = defaultVal;
+		}
+	}
+}
 
 
 /* --------------------------------------------------
@@ -1080,32 +1109,32 @@ int Network::readNetworkFromFile( std::string file_name )
 
 	// Read the stored network activations
 		fscanf(fp,"%s",&dummy);
-		for( i = 0 ; i < networkDimension; ++i) fscanf(fp,"%lf",&neuronActivation[i]);
+		readRowFromFile(fp, neuronActivation, 0.0);
 	// Read the stored network outputs
 		fscanf(fp,"%s",&dummy);
-		for( i = 0 ; i < networkDimension; ++i) fscanf(fp,"%lf",&neuronOutput[i]);
+		readRowFromFile(fp, neuronOutput, 0.0);
 	// Read the stored neuron thresholds
 		fscanf(fp,"%s",&dummy);
-		for( i = 0 ; i < networkDimension; ++i) fscanf(fp,"%lf",&neuronThresholds[i]);
+		readRowFromFile(fp, neuronThresholds, 0.0);
 	// Read the stored neuron learning rates
 		fscanf(fp,"%s",&dummy);
-		for( i = 0 ; i < networkDimension; ++i) fscanf(fp,"%lf",&neuronLearningRate[i]);
+		readRowFromFile(fp, neuronLearningRate, 0.0);
 	// Read the stored neuron refractory states
 		fscanf(fp,"%s",&dummy);
-		for( i = 0 ; i < networkDimension; ++i) fscanf(fp,"%lf",&neuronRefractoryState[i]);
+		readRowFromFile(fp, neuronRefractoryState, 0);
 	// Read the stored neuron refractory states
 		fscanf(fp,"%s",&dummy);
-		for( i = 0 ; i < networkDimension; ++i) fscanf(fp,"%lf",&neuronWeightTotal[i]);
+		readRowFromFile(fp, neuronWeightTotal, 1.0);
 	// Read the stored network weights
 		fscanf(fp,"%s",&dummy);
 		for( i = 0 ; i < networkDimension*networkDimension; ++i) fscanf(fp,"%lf",&networkWeights[i]);
 	// Read the stored network inputs
 		fscanf(fp,"%s",&dummy);
-		for( i = 0 ; i < numberOfInputs; ++i) fscanf(fp,"%lf",&networkInputs[i]);
+		readRowFromFile(fp, networkInputs, 0.0);
 		fscanf(fp,"%s",&dummy);
 	// Read the stored network outputs
 		fscanf(fp,"%s",&dummy);
-		for( i = 0 ; i < numberOfOutputs; ++i) fscanf(fp,"%lf",&networkOutputs[i]);
+		readRowFromFile(fp, networkOutputs, 0.0);
 	// Read the stored network plastic weights mask
 		fscanf(fp,"%s",&dummy);
 		for( i = 0 ; i < networkDimension*networkDimension; ++i) fscanf(fp,"%d",&plasticWeightsMask[i]);
