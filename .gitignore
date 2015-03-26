@@ -1,6 +1,9 @@
 Debug
 temp.txt
 output_squash.txt
+SIngleMatrixNetwork.plg
+SIngleMatrixNetwork.ncb
+SIngleMatrixNetwork.opt
 SIngleMatrixNetwork___Win32_Bilateral/
 log.txt
 bilateral.cfg-*
