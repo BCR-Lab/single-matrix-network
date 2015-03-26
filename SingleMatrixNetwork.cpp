@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
 
 		fred.writeNetworkOutputStateToFile(file_name + "-output_squash.txt");
 
-		fred.writeNetworkToFile(file_name + ".out");
+		fred.writeNetworkToFile(file_name + "-out.txt");
 		fred.writeNetworkWeightsToFile(file_name + "-weights.txt");
 		++i;
 	}
