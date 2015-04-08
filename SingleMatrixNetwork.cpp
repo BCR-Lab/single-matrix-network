@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 	fred.setNetworkWeightsDiagonalRange(1,0,8);
 */
 
-	fred.writeNetworkOutputStateToFile( "output_squash.txt" );
+	fred.writeNetworkOutputStateToFile(file_name + "-output_squash.txt" );
 
 	printf("*** Begin network learning ***\n");
 	i = 0;
