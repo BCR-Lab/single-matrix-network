@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "Network.h"
+#include "Ganglia.h"
 #include <math.h>
 #include <stdio.h>
 #include <string>
@@ -44,6 +45,13 @@ int main(int argc, char* argv[])
 	} else {
 		file_name = argv[1];
 	}
+
+	// Load the base bilateral ganglia file
+	Ganglia bilateral(file_name);
+
+	// Modify the weights
+	//float** networkWeights = bilateral.getNetworkWeights();
+
 
 	Network fred(file_name);
 
