@@ -70,9 +70,9 @@ int main(int argc, char* argv[])
 
 	const int numNeuronsToUpdate = 12;
 	const int updateNeurons[][2] = {{15,10},{15,11},{16,9},{16,11},{17,9},{17,10},{18,13},{18,14},{19,12},{19,14},{20,12},{20,13}};
-//	const double weights[] = { 0, -0.2, -0.35, -0.5, -0.6 };
+	const double weights[] = { 0, -0.2, -0.35, -0.5, -0.6 };
 	const int numWeights = 1;
-	const double weights[] = { -.3 };
+//	const double weights[] = { -.3 };
 
 	int weightNum;
 	for (weightNum = 0; weightNum < numWeights; weightNum++) {
@@ -117,6 +117,7 @@ void doLearning(Network fred, std::string prefix) {
 		printf("t=%03d: ", i);
 		fred.printNetworkOutputState( );
 
+		fred.writeNetworkInputToFile(prefix + "-in.txt");
 		fred.writeNetworkOutputStateToFile(prefix + "-output_squash.txt");
 
 		fred.writeNetworkToFile(prefix + "-out.txt");

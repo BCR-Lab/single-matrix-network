@@ -90,6 +90,7 @@ public:
 	void setNetworkWeightsRectangle( double value, int start_row, int end_row, int start_column, int end_column );
 	void setNetworkWeightsUpperTriangle( double value, int start_row, int end_row, int start_column, int end_column );
 	void setNetworkWeightsLowerTriangle( double value, int start_row, int end_row, int start_column, int end_column );
+	void writeNetworkInputToFile( std::string file_name );
 	void writeNetworkOutputStateToFile( std::string file_name );
 	void writeNetworkActivationStateToFile( std::string file_name );
 	void writeNetworkWeightsToFile( std::string file_name );

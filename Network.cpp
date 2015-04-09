@@ -1266,6 +1266,22 @@ void Network::writeNetworkActivationStateToFile( std::string file_name )
 }
 
 
+void Network::writeNetworkInputToFile( std::string file_name ) {
+	int i;
+	FILE *fp;
+
+	fp= fopen(file_name.c_str(),"a");
+
+	for( i=0 ; i < numberOfInputs; ++i){
+
+		fprintf(fp,"%lf ",  networkInputs[i]);
+
+	}
+
+	fprintf(fp,"\n");
+	fclose(fp);
+}
+
 /* --------------------------------------------------
 
 writeNetworkOutputToFile
