@@ -98,9 +98,12 @@ public:
 	void getNetworkOuput( double * vector );
 	int readNetworkFromFile( std::string file_name);
 	int writeNetworkToFile( std::string file_name );
+	double*getNetworkWeights();
 	void setNetworkWeights( double value );
 	void PrintNetworkState( void);
 	void printNetworkWeights();
+
+	int getNetworkDimension();
 
 	/*
 	 * Update the weight between two neurons to the given value. Neurons are 1-indexed.
@@ -112,5 +115,19 @@ public:
 	 */
 	void resetNetworkOutputs();
 };
+
+///////////////////////////////////////////////////
+// Helper functions
+///////////////////////////////////////////////////
+
+/*
+ * Return a copy of the given matrix.
+ */
+double* copyMatrix(double* matrix, int dimension);
+
+/*
+ * Print the difference between the beforeMatrix and the afterMatrix.
+ */
+void printDifferences(double* beforeMatrix, double* afterMatrix, int dimension);
 
 #endif // !defined(AFX_NETWORK_H__8E7C932B_D833_4E1F_9EDC_ED09AFCF876A__INCLUDED_)

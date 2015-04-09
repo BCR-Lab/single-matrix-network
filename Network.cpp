@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string>
+#include <algorithm>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -151,6 +152,40 @@ void Network::printNetworkWeights() {
 		printf("% .2f ", networkWeights[i]);
 		++item_count;
 		if (item_count == networkDimension) {
+			printf("\n");
+			item_count = 0;
+		}
+	}
+}
+
+/*
+ * Return a copy of the given matrix.
+ */
+double* copyMatrix(double* matrix, const int dimension) {
+	static double* copy = new double[dimension * dimension];
+	std::copy(matrix, matrix + (dimension * dimension), copy);
+	return copy;
+}
+
+void printDifferences(double* beforeMatrix, double* afterMatrix, int dimension) {
+	int item_count = 0;
+	printf("  ");
+	int i;
+	for (i = 0 ; i < dimension; ++i)	{
+		printf("    %2d", i + 1);
+	}
+	printf("\n  ");
+	for (i = 0 ; i < dimension; ++i)	{
+		printf("------");
+	}
+	printf("\n");
+	for (i = 0 ; i < dimension*dimension; ++i) {
+		if (item_count == 0) {
+			printf("%2d|", (i / dimension) + 1);
+		}
+		printf("% .2f ", afterMatrix[i] - beforeMatrix[i]);
+		++item_count;
+		if (item_count == dimension) {
 			printf("\n");
 			item_count = 0;
 		}
@@ -380,6 +415,14 @@ void Network::getNetworkOuput( double * vector )
 		vector[i] = networkOutputs[i];
 	}
 
+}
+
+double* Network::getNetworkWeights() {
+	return networkWeights;
+}
+
+int Network::getNetworkDimension() {
+	return networkDimension;
 }
 
 

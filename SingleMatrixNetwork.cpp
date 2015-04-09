@@ -70,9 +70,11 @@ int main(int argc, char* argv[])
 
 	const int numNeuronsToUpdate = 12;
 	const int updateNeurons[][2] = {{15,10},{15,11},{16,9},{16,11},{17,9},{17,10},{18,13},{18,14},{19,12},{19,14},{20,12},{20,13}};
-	const double weights[] = { 0.0, -0.1, -0.2, -0.35, -0.5, -0.65, -0.9, -1.25 };
-	const int numWeights = 8;
-//	const double weights[] = { -.3 };
+	//const double weights[] = { 0.0, -0.1, -0.2, -0.35, -0.5, -0.65, -0.9, -1.25 };
+	const int numWeights = 1;
+	const double weights[] = { -.3 };
+
+	double* beforeWeights = copyMatrix(fred.getNetworkWeights(), fred.getNetworkDimension());
 
 	int weightNum;
 	for (weightNum = 0; weightNum < numWeights; weightNum++) {
@@ -91,6 +93,9 @@ int main(int argc, char* argv[])
 
 	printf("\nFinal weights:\n");
 	fred.PrintNetworkState();
+
+	printf("\nLearning changes:\n");
+	printDifferences(beforeWeights, fred.getNetworkWeights(), fred.getNetworkDimension());
 
 	return 0;
 }
