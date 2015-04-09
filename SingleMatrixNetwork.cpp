@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "Network.h"
-#include "Ganglia.h"
 #include <math.h>
 #include <stdio.h>
 #include <string>
@@ -46,13 +45,6 @@ int main(int argc, char* argv[])
 		file_name = argv[1];
 	}
 
-	// Load the base bilateral ganglia file
-	Ganglia bilateral(file_name);
-
-	// Modify the weights
-	//float** networkWeights = bilateral.getNetworkWeights();
-
-
 	Network fred(file_name);
 
 
@@ -79,7 +71,7 @@ int main(int argc, char* argv[])
 	const int numNeuronsToUpdate = 12;
 	const int updateNeurons[][2] = {{15,10},{15,11},{16,9},{16,11},{17,9},{17,10},{18,13},{18,14},{19,12},{19,14},{20,12},{20,13}};
 	const double weights[] = { 0.0, -0.1, -0.2, -0.35, -0.5, -0.65, -0.9, -1.25 };
-	const int numWeights = 2;
+	const int numWeights = 8;
 //	const double weights[] = { -.3 };
 
 	int weightNum;
