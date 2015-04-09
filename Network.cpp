@@ -1066,6 +1066,10 @@ void Network::updateWeight(int from_neuron, int to_neuron, double new_weight) {
 	networkWeights[weight_index] = new_weight;
 }
 
+void Network::resetNetworkOutputs() {
+	setNetworkOutputs(0.0);
+}
+
 /*
  Read the values from the file at the given file pointer and set each one into
  the appropriate array index. If a value is not found in the file, set it to the given

@@ -70,8 +70,8 @@ int main(int argc, char* argv[])
 
 	const int numNeuronsToUpdate = 12;
 	const int updateNeurons[][2] = {{15,10},{15,11},{16,9},{16,11},{17,9},{17,10},{18,13},{18,14},{19,12},{19,14},{20,12},{20,13}};
-	const double weights[] = { 0, -0.2, -0.35, -0.5, -0.6 };
-	const int numWeights = 1;
+	const double weights[] = { 0.0, -0.1, -0.2, -0.35, -0.5, -0.65, -0.9, -1.25 };
+	const int numWeights = 2;
 //	const double weights[] = { -.3 };
 
 	int weightNum;
@@ -83,6 +83,7 @@ int main(int argc, char* argv[])
 		for (pairNum = 0; pairNum < numNeuronsToUpdate; pairNum++) {
 			fred.updateWeight(updateNeurons[pairNum][0], updateNeurons[pairNum][1], inhibWeight);
 		}
+		fred.resetNetworkOutputs();
 
 		doLearning(fred, "bilateral-" + to_string(inhibWeight));
 		fred.PrintNetworkState();
@@ -117,11 +118,11 @@ void doLearning(Network fred, std::string prefix) {
 		printf("t=%03d: ", i);
 		fred.printNetworkOutputState( );
 
-		fred.writeNetworkInputToFile(prefix + "-in.txt");
+		//fred.writeNetworkInputToFile(prefix + "-in.txt");
 		fred.writeNetworkOutputStateToFile(prefix + "-output_squash.txt");
 
 		fred.writeNetworkToFile(prefix + "-out.txt");
-		fred.writeNetworkWeightsToFile(prefix + "-weights.txt");
+		//fred.writeNetworkWeightsToFile(prefix + "-weights.txt");
 		++i;
 	}
 	printf("*** End network learning ***\n");
