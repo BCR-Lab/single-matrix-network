@@ -51,7 +51,24 @@ int main(int argc, char* argv[])
 
 	fred.writeNetworkOutputStateToFile(file_name + "-output_squash.txt" );
 
-	doLearning(fred, file_name);
+	const int numNeuronsToUpdate = 12;
+	const int updateNeurons[][2] = {{15,10},{15,11},{16,9},{16,11},{17,9},{17,10},{18,13},{18,14},{19,12},{19,14},{20,12},{20,13}};
+	//const double weights[] = { 0, -0.2, -0.35, -0.5, -0.6 };
+	const int numWeights = 1;
+	const double weights[] = { -.3 };
+
+	int weightNum;
+	for (weightNum = 0; weightNum < numWeights; weightNum++) {
+		int pairNum;
+		printf("Using inhibitory weights of %.2f\n", weights[weightNum]);
+		
+		for (pairNum = 0; pairNum < numNeuronsToUpdate; pairNum++) {
+			fred.updateWeight(updateNeurons[pairNum][0], updateNeurons[pairNum][1], weights[weightNum]);
+		}
+
+		doLearning(fred, file_name);
+		fred.PrintNetworkState();
+	}
 
 	printf("\nFinal weights:\n");
 	fred.PrintNetworkState();

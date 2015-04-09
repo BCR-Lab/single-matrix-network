@@ -101,6 +101,10 @@ public:
 	void PrintNetworkState( void);
 	void printNetworkWeights();
 
+	/*
+	 * Update the weight between two neurons to the given value. Neurons are 1-indexed.
+	 */
+	void updateWeight(int from_neuron, int to_neuron, double new_weight);
 };
 
 #endif // !defined(AFX_NETWORK_H__8E7C932B_D833_4E1F_9EDC_ED09AFCF876A__INCLUDED_)
