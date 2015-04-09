@@ -8,10 +8,10 @@
 #include <string>
 #include <string.h>
 
+void doLearning(Network fred, std::string prefix);
+
 int main(int argc, char* argv[])
 {
-	double input[6];
-	int i,j;
 
 //	Network ted(2,16,2,"blank_network.txt");
 //	ted.writeNetworkToFile("this_is_mine.txt");
@@ -51,6 +51,18 @@ int main(int argc, char* argv[])
 
 	fred.writeNetworkOutputStateToFile(file_name + "-output_squash.txt" );
 
+	doLearning(fred, file_name);
+
+	printf("\nFinal weights:\n");
+	fred.PrintNetworkState();
+
+	return 0;
+}
+
+void doLearning(Network fred, std::string prefix) {
+	double input[6];
+	int i,j;
+
 	printf("*** Begin network learning ***\n");
 	i = 0;
 	while( i < 200 ){
@@ -70,16 +82,11 @@ int main(int argc, char* argv[])
 		printf("t=%03d: ", i);
 		fred.printNetworkOutputState( );
 
-		fred.writeNetworkOutputStateToFile(file_name + "-output_squash.txt");
+		fred.writeNetworkOutputStateToFile(prefix + "-output_squash.txt");
 
-		fred.writeNetworkToFile(file_name + "-out.txt");
-		fred.writeNetworkWeightsToFile(file_name + "-weights.txt");
+		fred.writeNetworkToFile(prefix + "-out.txt");
+		fred.writeNetworkWeightsToFile(prefix + "-weights.txt");
 		++i;
 	}
 	printf("*** End network learning ***\n");
-
-	printf("\nFinal weights:\n");
-	fred.PrintNetworkState();
-
-	return 0;
 }
