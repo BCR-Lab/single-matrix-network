@@ -104,6 +104,8 @@ public:
 	void printNetworkWeights();
 
 	int getNetworkDimension();
+	int getNumInputs();
+	int getNumOutputs();
 
 	/*
 	 * Update the weight between two neurons to the given value. Neurons are 1-indexed.

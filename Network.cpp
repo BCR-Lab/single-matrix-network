@@ -425,6 +425,14 @@ int Network::getNetworkDimension() {
 	return networkDimension;
 }
 
+int Network::getNumInputs() {
+	return numberOfInputs;
+}
+
+int Network::getNumOutputs() {
+	return numberOfOutputs;
+}
+
 
 /* --------------------------------------------------
 

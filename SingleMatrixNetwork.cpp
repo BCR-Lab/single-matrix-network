@@ -8,6 +8,21 @@
 #include <string>
 #include <sstream>
 
+// Should be in math.h
+#define M_PI					3.14159265358979323846	/* pi */
+
+// Number of oscillations per time step
+#define ORDINARY_FREQUENCY		0.02					/* 1 oscillation every 50 time steps */
+
+// How far should each input be shifted from the previous?
+#define PHASE_SHIFT_PER_INPUT	0.1
+
+// Number of sine wave oscillations to loop through
+#define NUM_OSCILLATIONS		3
+
+// Number of time steps it takes to go through a single oscillation
+#define PERIOD					1 / ORDINARY_FREQUENCY
+
 void doLearning(Network fred, std::string prefix);
 
 /*
@@ -91,9 +106,6 @@ int main(int argc, char* argv[])
 		fred.PrintNetworkState();
 	}
 
-	printf("\nFinal weights:\n");
-	fred.PrintNetworkState();
-
 	printf("\nLearning changes:\n");
 	printDifferences(beforeWeights, fred.getNetworkWeights(), fred.getNetworkDimension());
 
@@ -101,15 +113,24 @@ int main(int argc, char* argv[])
 }
 
 void doLearning(Network fred, std::string prefix) {
-	double input[6];
-	int i,j;
+	const int numInputs = fred.getNumInputs();
+	double* input = new double[numInputs];
+
+	int t;
 
 	printf("*** Begin network learning ***\n");
-	i = 0;
-	while( i < 200 ){
+	const double angularFrequency = 2.0 * M_PI * ORDINARY_FREQUENCY;
+
+	// Begin at the middle of the sine wave, and continue for the number of oscillations requested
+	for (t = PERIOD / 2; t < (NUM_OSCILLATIONS * PERIOD) + PERIOD / 2; t++) {
 		//-----------------------------------------------------------
-		for(j = 0; j < 6; ++j ){	// temporary input function (STEP RESPONSE)
-			input[j]  =  sin((i + j*3)*0.1);
+		int inputNum;
+		for(inputNum = 0; inputNum < numInputs; inputNum++) {
+
+			const double phase = inputNum * PHASE_SHIFT_PER_INPUT;
+
+			input[inputNum] = sin(t * angularFrequency + phase);
+			//printf("[%d], phase=%f, freq=%f, input=%f\n", inputNum, phase, angularFrequency, input[inputNum]);
 		}
 		//---------------------------------------------------------------------
 
@@ -120,15 +141,14 @@ void doLearning(Network fred, std::string prefix) {
 		fred.cycleNetworkNormalizeHebbianLearning();
 
 //		fred.printNetworkOuput();
-		printf("t=%03d: ", i);
+		printf("t=%03d: ", t);
 		fred.printNetworkOutputState( );
 
-		//fred.writeNetworkInputToFile(prefix + "-in.txt");
+		fred.writeNetworkInputToFile(prefix + "-in.txt");
 		fred.writeNetworkOutputStateToFile(prefix + "-output_squash.txt");
 
 		fred.writeNetworkToFile(prefix + "-out.txt");
 		//fred.writeNetworkWeightsToFile(prefix + "-weights.txt");
-		++i;
 	}
 	printf("*** End network learning ***\n");
 }
