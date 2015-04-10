@@ -132,12 +132,14 @@ void doLearning(Network fred, std::string prefix) {
 	const double angularFrequency = 2.0 * M_PI * ORDINARY_FREQUENCY;
 
 	// Begin at the middle of the sine wave, and continue for the number of oscillations requested
-	for (t = PERIOD / 2; t < (NUM_OSCILLATIONS * PERIOD) + PERIOD / 2; t++) {
+	for (t = 0; t < NUM_OSCILLATIONS * PERIOD; t++) {
 		//-----------------------------------------------------------
 		int inputNum;
 		for(inputNum = 0; inputNum < numInputs; inputNum++) {
 
-			const double phase = inputNum * PHASE_SHIFT_PER_INPUT;
+			// period consists of a constant shift (half an oscillation forward so that we start
+			// on a down-sweep) and a variable shift based on which input
+			const double phase = PERIOD / 2 + inputNum * PHASE_SHIFT_PER_INPUT;
 
 			input[inputNum] = sin(t * angularFrequency + phase);
 			//printf("[%d], phase=%f, freq=%f, input=%f\n", inputNum, phase, angularFrequency, input[inputNum]);
