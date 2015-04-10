@@ -88,9 +88,9 @@ int main(int argc, char* argv[])
 
 	const int numNeuronsToUpdate = 12;
 	const int updateNeurons[][2] = {{15,10},{15,11},{16,9},{16,11},{17,9},{17,10},{18,13},{18,14},{19,12},{19,14},{20,12},{20,13}};
-	const double weights[] = { 0.0, -0.1, -0.2, -0.35, -0.5, -0.65, -0.9, -1.25 };
-	const int numWeights = 8;
-	//const double weights[] = { -.3 };
+	//const double weights[] = { 0.0, -0.1, -0.2, -0.35, -0.5, -0.65, -0.9, -1.25 };
+	const int numWeights = 1;
+	const double weights[] = { -.35 };
 
 	double* beforeWeights = copyMatrix(fred.getNetworkWeights(), fred.getNetworkDimension());
 
@@ -137,11 +137,10 @@ void doLearning(Network fred, std::string prefix) {
 		int inputNum;
 		for(inputNum = 0; inputNum < numInputs; inputNum++) {
 
-			// period consists of a constant shift (half an oscillation forward so that we start
-			// on a down-sweep) and a variable shift based on which input
-			const double phase = PERIOD / 2 + inputNum * PHASE_SHIFT_PER_INPUT;
+			const double phase = inputNum * PHASE_SHIFT_PER_INPUT;
 
-			input[inputNum] = sin(t * angularFrequency + phase);
+			// Offset the time by half a period to start on the down stroke
+			input[inputNum] = sin((t + PERIOD / 2) * angularFrequency + phase);
 			//printf("[%d], phase=%f, freq=%f, input=%f\n", inputNum, phase, angularFrequency, input[inputNum]);
 		}
 		//---------------------------------------------------------------------
