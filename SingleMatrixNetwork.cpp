@@ -64,7 +64,6 @@ int main(int argc, char* argv[])
 
 	Network fred(file_name);
 
-
 	fred.PrintNetworkState();
 	printf("\n");
 
@@ -87,9 +86,9 @@ int main(int argc, char* argv[])
 
 	const int numNeuronsToUpdate = 12;
 	const int updateNeurons[][2] = {{15,10},{15,11},{16,9},{16,11},{17,9},{17,10},{18,13},{18,14},{19,12},{19,14},{20,12},{20,13}};
-	//const double weights[] = { 0.0, -0.1, -0.2, -0.35, -0.5, -0.65, -0.9, -1.25 };
-	const int numWeights = 1;
-	const double weights[] = { -.3 };
+	const double weights[] = { 0.0, -0.1, -0.2, -0.35, -0.5, -0.65, -0.9, -1.25 };
+	const int numWeights = 8;
+	//const double weights[] = { -.3 };
 
 	double* beforeWeights = copyMatrix(fred.getNetworkWeights(), fred.getNetworkDimension());
 
@@ -118,7 +117,14 @@ void doLearning(Network fred, std::string prefix) {
 	const int numInputs = fred.getNumInputs();
 	double* input = new double[numInputs];
 
+	const std::string output_file = prefix + "-output_squash.txt";
+	const std::string input_file = prefix + "-in.txt";
+
 	int t;
+
+	// Delete files
+	std::remove(output_file.c_str());
+	std::remove(input_file.c_str());
 
 	printf("*** Begin network learning ***\n");
 	const double angularFrequency = 2.0 * M_PI * ORDINARY_FREQUENCY;
@@ -146,8 +152,8 @@ void doLearning(Network fred, std::string prefix) {
 		printf("t=%03d: ", t);
 		fred.printNetworkOutputState( );
 
-		fred.writeNetworkInputToFile(prefix + "-in.txt");
-		fred.writeNetworkOutputStateToFile(prefix + "-output_squash.txt");
+		fred.writeNetworkInputToFile(input_file);
+		fred.writeNetworkOutputStateToFile(output_file);
 
 		fred.writeNetworkToFile(prefix + "-out.txt");
 		//fred.writeNetworkWeightsToFile(prefix + "-weights.txt");
