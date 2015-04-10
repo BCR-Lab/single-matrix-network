@@ -26,7 +26,6 @@
 #define PERIOD					1 / ORDINARY_FREQUENCY
 
 void doLearning(Network fred, std::string prefix);
-void writeToFile(std::string str, std::string file_name);
 
 /*
  * Convert values to strings. Needed because std::to_string is apparently missing
@@ -86,12 +85,11 @@ int main(int argc, char* argv[])
 
 	fred.writeNetworkOutputStateToFile(file_name + "-output_squash.txt" );
 
-	// TODO These should be defined in a separate control file
 	const int numNeuronsToUpdate = 12;
 	const int updateNeurons[][2] = {{15,10},{15,11},{16,9},{16,11},{17,9},{17,10},{18,13},{18,14},{19,12},{19,14},{20,12},{20,13}};
-	const double weights[] = { 0.0, -0.1, -0.2, -0.35, -0.5, -0.65, -0.9, -1.25 };
-	const int numWeights = 8;
-	//const double weights[] = { -.3 };
+	//const double weights[] = { 0.0, -0.1, -0.2, -0.35, -0.5, -0.65, -0.9, -1.25 };
+	const int numWeights = 1;
+	const double weights[] = { -.3 };
 
 	double* beforeWeights = copyMatrix(fred.getNetworkWeights(), fred.getNetworkDimension());
 
@@ -106,7 +104,7 @@ int main(int argc, char* argv[])
 		}
 		fred.resetNetworkOutputs();
 
-		doLearning(fred, "/Users/shawnlauzon/tmp/bilateral-" + to_string(inhibWeight));
+		doLearning(fred, "bilateral-" + to_string(inhibWeight));
 		fred.PrintNetworkState();
 	}
 
@@ -118,14 +116,6 @@ int main(int argc, char* argv[])
 
 void doLearning(Network fred, std::string prefix) {
 	const int numInputs = fred.getNumInputs();
-
-	const std::string output_file = prefix + "-output_squash.txt";
-	const std::string input_file = prefix + "-in.txt";
-
-	// Delete files
-	std::remove(output_file.c_str());
-	std::remove(input_file.c_str());
-
 	double* input = new double[numInputs];
 
 	int t;
@@ -156,24 +146,11 @@ void doLearning(Network fred, std::string prefix) {
 		printf("t=%03d: ", t);
 		fred.printNetworkOutputState( );
 
-		// Append the time step to each row
-		writeToFile(output_file, std::to_string(t) + " ");
-		writeToFile(input_file, std::to_string(t) + " ");
-
-		fred.writeNetworkInputToFile(input_file);
-
-		fred.writeNetworkOutputStateToFile(output_file);
+		fred.writeNetworkInputToFile(prefix + "-in.txt");
+		fred.writeNetworkOutputStateToFile(prefix + "-output_squash.txt");
 
 		fred.writeNetworkToFile(prefix + "-out.txt");
 		//fred.writeNetworkWeightsToFile(prefix + "-weights.txt");
 	}
 	printf("*** End network learning ***\n");
-}
-
-void writeToFile(std::string file_name, std::string str) {
-	FILE *fp;
-
-	fp = fopen(file_name.c_str(), "a");
-	fprintf(fp, "%s", str.c_str());
-	fclose(fp);
 }
