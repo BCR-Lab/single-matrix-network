@@ -217,10 +217,10 @@ void Network::networkActivation( void  )
 	for( neuron_number = 0; neuron_number < networkDimension; ++neuron_number){
 
 		k = networkDimension*neuron_number + neuron_number;  // you should make this a function rather than computing it 2x in this routine, it could be re-used for other routines and avoid problems of different computations in different locations
-        fprintf(logFile, "activation[%d] = self(%.2f) * weight[%d,%d](%.2f)", neuron_number,
+        fprintf(logFile, "activation[%d] = self(%.4f) * weight[%d,%d](%.4f)", neuron_number,
                neuronActivation[neuron_number], neuron_number, neuron_number, networkWeights[k]);
 		neuronActivation[neuron_number] = neuronActivation[neuron_number] * networkWeights[k];
-        fprintf(logFile, " => %.2f\n", neuronActivation[neuron_number]);
+        fprintf(logFile, " => %.4f\n", neuronActivation[neuron_number]);
 	}
 
     fprintf(logFile, "  b. Update inputs from other neurons\n");
@@ -230,19 +230,19 @@ void Network::networkActivation( void  )
 
 			if(neuron_number != source_neuron_number){						// used self weights above, avoid double dipping
 				k = networkDimension*source_neuron_number + neuron_number;	// obtain the index of the 2d weight array represented as a 1 d array.
-                fprintf(logFile, "activation[%d] = self(%.2f) + output_source[%d]=%.2f * weight[%d,%d](%.2f)",
+                fprintf(logFile, "activation[%d] = self(%.4f) + output_source[%d]=%.4f * weight[%d,%d](%.4f)",
                        neuron_number, neuronActivation[neuron_number], source_neuron_number, neuronOutput[source_neuron_number], source_neuron_number, neuron_number, networkWeights[k]);
 				neuronActivation[neuron_number] += neuronOutput[source_neuron_number] * networkWeights[k];
-                fprintf(logFile, " => %.2f\n", neuronActivation[neuron_number]);
+                fprintf(logFile, " => %.4f\n", neuronActivation[neuron_number]);
 			}
 		}
 
 	// ------------------ Add External Inputs to Activations  -----------------------
 		if (neuron_number < numberOfInputs ) {
-            fprintf(logFile, "activation[%d] = self(%.2f) + network_input[%d]=%.2f", neuron_number,
+            fprintf(logFile, "activation[%d] = self(%.4f) + network_input[%d]=%.4f", neuron_number,
                    neuronActivation[neuron_number], neuron_number, networkInputs[neuron_number]);
 			neuronActivation[neuron_number] += networkInputs[neuron_number]; // Network inputs are set externally
-            fprintf(logFile, " => %.2f\n", neuronActivation[neuron_number]);
+            fprintf(logFile, " => %.4f\n", neuronActivation[neuron_number]);
 //printf("-- %2.3lf %2.3lf\n", neuronActivation[neuron_number], networkInputs[neuron_number]);
 		}
 	}
@@ -308,7 +308,7 @@ void Network::setNetworkOuput( void )
 
 	for(i = 0; i< numberOfOutputs; ++i) {
 		networkOutputs[i] = neuronOutput[numberOfInputs + numberOfInterNeurons + i];
-        fprintf(logFile, "networkOutput[%d] := neuronOutput[%d](%.2f)\n", i,
+        fprintf(logFile, "networkOutput[%d] := neuronOutput[%d](%.4f)\n", i,
                numberOfInputs + numberOfInterNeurons + i,
                neuronOutput[numberOfInputs + numberOfInterNeurons + i]);
 //printf("* %d ",numberOfInputs + numberOfInterNeurons + i);
@@ -360,7 +360,7 @@ void Network::thresholdNeuronOutputs( void )
 //			neuronActivation[i] = neuronActivation[i];
 		}
 		else neuronOutput[i] = 0.0;
-        fprintf(logFile, "neuronOutput[%d]: activation(%.2f) > threshold(%.2f)? ==> %.2f\n", i,
+        fprintf(logFile, "neuronOutput[%d]: activation(%.4f) > threshold(%.4f)? ==> %.4f\n", i,
                neuronActivation[i], neuronThresholds[i], neuronOutput[i]);
 	}
 //printf("\n ");
@@ -383,26 +383,10 @@ void Network::squashNeuronOutputs( double offset=0, double expSlope=1)
 	int i;
 
 	for(i = 0; i < networkDimension; ++i){
-
 			neuronOutput[i] = (1/(1+exp(-neuronActivation[i] * expSlope) ) + offset);
 
 	}
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* --------------------------------------------------
 
@@ -453,10 +437,7 @@ void Network::setNetworkWeights( double value )
 		networkWeights[i] = value;
 
 	}
-
-
 }
-
 
 
 /* --------------------------------------------------
@@ -845,10 +826,10 @@ void Network::hebbianWeightUpdate( void  )
 				weight_increment = 0;
 				weight_index = computeWeightIndex( source_neuron_number, target_neuron_number );
 				weight_increment = neuronLearningRate[target_neuron_number]*neuronOutput[source_neuron_number]*neuronOutput[target_neuron_number]*plasticWeightsMask[weight_index];  // remember that the plastic weights mask AND the learning rate for a neuron must agree ( both be non-zero) for a neuron to have adaptive weights
-                fprintf(logFile, "weight[%d] = prev_weight(%.2f) + %.2f", weight_index,
+                fprintf(logFile, "weight[%d] = prev_weight(%.4f) + %.4f", weight_index,
                        networkWeights[weight_index], weight_increment);
 				networkWeights[weight_index] += weight_increment;
-                fprintf(logFile, " => %.2f\n", networkWeights[weight_index]);
+                fprintf(logFile, " => %.4f\n", networkWeights[weight_index]);
 			}
 
 		}
@@ -882,7 +863,7 @@ void Network::hebbianExcitatoryWeightUpdate( void )
 				if( networkWeights[weight_index] > 0 ){
 
 					weight_increment = neuronLearningRate[target_neuron_number]*neuronOutput[source_neuron_number]*neuronOutput[target_neuron_number]*plasticWeightsMask[weight_index];  // remember that the plastic weights mask AND the learning rate for a neuron must agree ( both be non-zero) for a neuron to have adaptive weights
-                    fprintf(logFile, "weight[%d,%d](%.2f) += learning_rate(%.2f) * output[%d](%.2f) * output[%d](%.2f) * mask(%d)",
+                    fprintf(logFile, "weight[%d,%d](%.4f) += learning_rate(%.4f) * output[%d](%.4f) * output[%d](%.4f) * mask(%d)",
 							source_neuron_number, target_neuron_number,
 							networkWeights[weight_index],
                            neuronLearningRate[target_neuron_number],
@@ -893,7 +874,7 @@ void Network::hebbianExcitatoryWeightUpdate( void )
                            plasticWeightsMask[weight_index],
 							weight_increment);
 					networkWeights[weight_index] += weight_increment;
-                    fprintf(logFile, "  => %.2f\n", networkWeights[weight_index]);
+                    fprintf(logFile, "  => %.4f\n", networkWeights[weight_index]);
 				}
 			}
 
@@ -1062,13 +1043,13 @@ void Network::normalizeNonDiagonalExcitatoryNeuronWeights( void )
 		for( source_neuron_number = 0; source_neuron_number < networkDimension; ++source_neuron_number){
 			weight_index = computeWeightIndex( source_neuron_number, target_neuron_number );
 			if(target_neuron_number != source_neuron_number && weight_sum != 0.0 && networkWeights[weight_index] > 0){  // avoid division by zero for input units the autapse may be the only non-zero weight.
-                fprintf(logFile, "weight[%d,%d] = weight_total[%d](%.2f) * weight[%d,%d](%.2f) / sum(%.2f)",
+                fprintf(logFile, "weight[%d,%d] = weight_total[%d](%.4f) * weight[%d,%d](%.4f) / sum(%.4f)",
                        source_neuron_number, target_neuron_number, target_neuron_number,
                        neuronWeightTotal[ target_neuron_number ],
                        source_neuron_number, target_neuron_number,
                        networkWeights[weight_index], weight_sum);
 				networkWeights[weight_index] = neuronWeightTotal[ target_neuron_number ]*( networkWeights[weight_index]/weight_sum);
-                fprintf(logFile, " => %.2f\n", networkWeights[weight_index]);
+                fprintf(logFile, " => %.4f\n", networkWeights[weight_index]);
 			}
 		}
 	}
@@ -1116,7 +1097,7 @@ void Network::updateWeight(int from_neuron, int to_neuron, double new_weight) {
 	// Neuron indicies are 1-based, so subtract 1 to be 0-based
 	int weight_index = computeWeightIndex(from_neuron - 1, to_neuron - 1);
 
-	fprintf(logFile, "Update weight: %2d => %2d: %.2f => %.2f\n", from_neuron, to_neuron, 
+	fprintf(logFile, "Update weight: %2d => %2d: %.4f => %.4f\n", from_neuron, to_neuron,
 		networkWeights[weight_index], new_weight);
 	networkWeights[weight_index] = new_weight;
 }
