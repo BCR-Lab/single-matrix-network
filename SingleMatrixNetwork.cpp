@@ -144,6 +144,9 @@ void doLearning(Network fred, std::string prefix) {
 		}
 		//---------------------------------------------------------------------
 
+		printf("t=%03d: ", t);
+		fprintf(fred.getLogFile(), "-- t=%03d --\n", t);
+
 		fred.setNetworkInput( input );
 
 		fred.cycleNetwork();
@@ -151,7 +154,6 @@ void doLearning(Network fred, std::string prefix) {
 		fred.cycleNetworkNormalizeHebbianLearning();
 
 //		fred.printNetworkOuput();
-		printf("t=%03d: ", t);
 		fred.printNetworkOutputState( );
 
 		fred.writeNetworkInputToFile(input_file);

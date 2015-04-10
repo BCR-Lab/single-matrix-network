@@ -98,6 +98,9 @@ void Network::closeLogFile()
 	fclose(logFile);
 }
 
+FILE* Network::getLogFile() {
+	return logFile;
+}
 
 void Network::instantiateDefaultNetwork( void )
 {

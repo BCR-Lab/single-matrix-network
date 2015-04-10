@@ -106,6 +106,7 @@ public:
 	int getNetworkDimension();
 	int getNumInputs();
 	int getNumOutputs();
+	FILE* getLogFile();
 
 	/*
 	 * Update the weight between two neurons to the given value. Neurons are 1-indexed.
