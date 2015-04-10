@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <string>
 #include <sstream>
+#include <fstream>
+#include <iostream>
 
 #ifndef M_PI
 // Not provided by MS Visual C++
@@ -101,7 +103,7 @@ int main(int argc, char* argv[])
 		for (pairNum = 0; pairNum < numNeuronsToUpdate; pairNum++) {
 			fred.updateWeight(updateNeurons[pairNum][0], updateNeurons[pairNum][1], inhibWeight);
 		}
-		fred.resetNetworkOutputs();
+		fred.resetNeuronOutputs();
 
 		doLearning(fred, "bilateral-" + to_string(inhibWeight));
 		fred.PrintNetworkState();

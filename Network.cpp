@@ -8,6 +8,7 @@
 #include <math.h>
 #include <string>
 #include <algorithm>
+#include <iostream>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -1117,8 +1118,11 @@ void Network::updateWeight(int from_neuron, int to_neuron, double new_weight) {
 	networkWeights[weight_index] = new_weight;
 }
 
-void Network::resetNetworkOutputs() {
-	setNetworkOutputs(0.0);
+void Network::resetNeuronOutputs() {
+	int i;
+	for (i=0; i < networkDimension; ++i) {
+		neuronOutput[i] = 0.0;
+	}
 }
 
 /*

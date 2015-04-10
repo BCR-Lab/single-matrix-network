@@ -115,7 +115,7 @@ public:
 	/*
 	 * Reset the stored outputs of all neurons.
 	 */
-	void resetNetworkOutputs();
+	void resetNeuronOutputs();
 };
 
 ///////////////////////////////////////////////////
