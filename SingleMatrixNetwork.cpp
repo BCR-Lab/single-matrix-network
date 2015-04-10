@@ -8,8 +8,10 @@
 #include <string>
 #include <sstream>
 
-// Should be in math.h
+#ifndef M_PI
+// Not provided by MS Visual C++
 #define M_PI					3.14159265358979323846	/* pi */
+#endif
 
 // Number of oscillations per time step
 #define ORDINARY_FREQUENCY		0.02					/* 1 oscillation every 50 time steps */
