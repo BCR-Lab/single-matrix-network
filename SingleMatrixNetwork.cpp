@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 
 	fred.writeNetworkOutputStateToFile(network_file_name + "-output_squash.txt" );
 
-	std::string input_file_name = nullptr;
+	std::string input_file_name;
 	if (argc > 2) {
 		input_file_name = argv[2];
 	}
