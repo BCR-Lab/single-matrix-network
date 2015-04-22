@@ -4,6 +4,7 @@ output_squash.txt
 SIngleMatrixNetwork.plg
 SIngleMatrixNetwork.ncb
 SIngleMatrixNetwork.opt
+SIngleMatrixNetwork.layout
 SIngleMatrixNetwork___Win32_Bilateral/
 log.txt
 bilateral.cfg-*
