@@ -56,15 +56,14 @@ int main(int argc, char* argv[])
 
 //	Network fred("ganglia5.txt");
 
-	std::string file_name;
-	//char* file_name;
+	std::string network_file_name;
     if (argc < 2) {
-		file_name = "ganglia5.txt";
+		network_file_name = "ganglia5.txt";
 	} else {
-		file_name = argv[1];
+		network_file_name = argv[1];
 	}
 
-	Network fred(file_name);
+	Network fred(network_file_name);
 
 	fred.PrintNetworkState();
 	printf("\n");
@@ -84,7 +83,12 @@ int main(int argc, char* argv[])
 	fred.setNetworkWeightsDiagonalRange(1,0,8);
 */
 
-	fred.writeNetworkOutputStateToFile(file_name + "-output_squash.txt" );
+	fred.writeNetworkOutputStateToFile(network_file_name + "-output_squash.txt" );
+
+	std::string input_file_name = nullptr;
+	if (argc > 2) {
+		input_file_name = argv[2];
+	}
 
 	const int numNeuronsToUpdate = 12;
 	const int updateNeurons[][2] = {{15,10},{15,11},{16,9},{16,11},{17,9},{17,10},{18,13},{18,14},{19,12},{19,14},{20,12},{20,13}};
