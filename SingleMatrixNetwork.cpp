@@ -9,25 +9,9 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+using namespace std;
 
-#ifndef M_PI
-// Not provided by MS Visual C++
-#define M_PI					3.14159265358979323846	/* pi */
-#endif
-
-// Number of oscillations per time step
-#define ORDINARY_FREQUENCY		0.02					/* 1 oscillation every 50 time steps */
-
-// How far should each input be shifted from the previous?
-#define PHASE_SHIFT_PER_INPUT	0.1
-
-// Number of sine wave oscillations to loop through
-#define NUM_OSCILLATIONS		3
-
-// Number of time steps it takes to go through a single oscillation
-#define PERIOD					1 / ORDINARY_FREQUENCY
-
-void doLearning(Network fred, std::string prefix);
+void doLearning(Network fred, string input_file_name, string prefix);
 
 /*
  * Convert values to strings. Needed because std::to_string is apparently missing
@@ -37,7 +21,7 @@ template <typename T>
 std::string to_string(T value)
 {
 	//create an output string stream
-	std::ostringstream os ;
+	ostringstream os ;
 
 	//throw the value into the string stream
 	os << value ;
@@ -56,7 +40,7 @@ int main(int argc, char* argv[])
 
 //	Network fred("ganglia5.txt");
 
-	std::string network_file_name;
+	string network_file_name;
     if (argc < 2) {
 		network_file_name = "ganglia5.txt";
 	} else {
@@ -85,66 +69,69 @@ int main(int argc, char* argv[])
 
 	fred.writeNetworkOutputStateToFile(network_file_name + "-output_squash.txt" );
 
-	std::string input_file_name;
+	string input_file_name;
 	if (argc > 2) {
 		input_file_name = argv[2];
+		cout << "Reading inputs from " << input_file_name << endl;
 	}
 
 	fred.resetNeuronOutputs();
 
-	doLearning(fred, input_file_name);
+	doLearning(fred, input_file_name, network_file_name);
 	fred.PrintNetworkState();
 
 	return 0;
 }
 
-void doLearning(Network fred, std::string prefix) {
-	const int numInputs = fred.getNumInputs();
-	double* input = new double[numInputs];
+/*
+ * Process each line in the input_file_name through the network
+ */
+void doLearning(Network fred, string input_file_name, string prefix) {
+	const int num_inputs = fred.getNumInputs();
+	double* input = new double[num_inputs];
 
-	const std::string output_file = prefix + "-output_squash.txt";
-	const std::string input_file = prefix + "-in.txt";
+	const string output_file_name = prefix + "-output_squash.txt";
 
-	int t;
-
-	// Delete files
-	std::remove(output_file.c_str());
-	std::remove(input_file.c_str());
+	int i = 0;
+	int t = 0;
 
 	printf("*** Begin network learning ***\n");
-	const double angularFrequency = 2.0 * M_PI * ORDINARY_FREQUENCY;
 
-	// Begin at the middle of the sine wave, and continue for the number of oscillations requested
-	for (t = 0; t < NUM_OSCILLATIONS * PERIOD; t++) {
-		//-----------------------------------------------------------
-		int inputNum;
-		for(inputNum = 0; inputNum < numInputs; inputNum++) {
+	string input_line;
+	ifstream input_file(input_file_name);
+	if (!input_file.is_open()) {
+		cerr << "Error opening input file " << input_file_name << endl;
+	} else {
+		while (getline(input_file, input_line)) {
+			//cout << "Inputs: " << input_line << endl;
 
-			const double phase = inputNum * PHASE_SHIFT_PER_INPUT;
+			// Load inputs into input array
+			const char* line = input_line.c_str();
+			int input_num = 0;
+			for (i = 0; i < input_line.length(); i += 2) {
+				sscanf(line, "%lf", &input[input_num]);
+			}
 
-			// Offset the time by half a period to start on the down stroke
-			input[inputNum] = sin((t + PERIOD / 2) * angularFrequency + phase);
-			//printf("[%d], phase=%f, freq=%f, input=%f\n", inputNum, phase, angularFrequency, input[inputNum]);
+			printf("t=%03d: ", t);
+			fprintf(fred.getLogFile(), "-- t=%03d --\n", t);
+
+			fred.setNetworkInput( input );
+
+			fred.cycleNetwork();
+
+			fred.cycleNetworkNormalizeHebbianLearning();
+
+	//		fred.printNetworkOuput();
+			fred.printNetworkOutputState( );
+
+//			fred.writeNetworkInputToFile(input_file_name);
+			fred.writeNetworkOutputStateToFile(output_file_name);
+
+			fred.writeNetworkToFile(prefix + "-out.txt");
+			//fred.writeNetworkWeightsToFile(prefix + "-weights.txt");
+
+			t++;
 		}
-		//---------------------------------------------------------------------
-
-		printf("t=%03d: ", t);
-		fprintf(fred.getLogFile(), "-- t=%03d --\n", t);
-
-		fred.setNetworkInput( input );
-
-		fred.cycleNetwork();
-
-		fred.cycleNetworkNormalizeHebbianLearning();
-
-//		fred.printNetworkOuput();
-		fred.printNetworkOutputState( );
-
-		fred.writeNetworkInputToFile(input_file);
-		fred.writeNetworkOutputStateToFile(output_file);
-
-		fred.writeNetworkToFile(prefix + "-out.txt");
-		//fred.writeNetworkWeightsToFile(prefix + "-weights.txt");
 	}
 	printf("*** End network learning ***\n");
 }
