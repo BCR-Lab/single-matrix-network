@@ -90,31 +90,10 @@ int main(int argc, char* argv[])
 		input_file_name = argv[2];
 	}
 
-	const int numNeuronsToUpdate = 12;
-	const int updateNeurons[][2] = {{15,10},{15,11},{16,9},{16,11},{17,9},{17,10},{18,13},{18,14},{19,12},{19,14},{20,12},{20,13}};
-	//const double weights[] = { 0.0, -0.1, -0.2, -0.35, -0.5, -0.65, -0.9, -1.25 };
-	const int numWeights = 1;
-	const double weights[] = { -.35 };
+	fred.resetNeuronOutputs();
 
-	double* beforeWeights = copyMatrix(fred.getNetworkWeights(), fred.getNetworkDimension());
-
-	int weightNum;
-	for (weightNum = 0; weightNum < numWeights; weightNum++) {
-		int pairNum;
-		double inhibWeight = weights[weightNum];
-		printf("Using inhibitory weights of %.2f\n", inhibWeight);
-		
-		for (pairNum = 0; pairNum < numNeuronsToUpdate; pairNum++) {
-			fred.updateWeight(updateNeurons[pairNum][0], updateNeurons[pairNum][1], inhibWeight);
-		}
-		fred.resetNeuronOutputs();
-
-		doLearning(fred, "bilateral-" + to_string(inhibWeight));
-		fred.PrintNetworkState();
-	}
-
-	printf("\nLearning changes:\n");
-	printDifferences(beforeWeights, fred.getNetworkWeights(), fred.getNetworkDimension());
+	doLearning(fred, input_file_name);
+	fred.PrintNetworkState();
 
 	return 0;
 }
