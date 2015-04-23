@@ -78,7 +78,9 @@ private:
 	void setNeuronWeightTotal( double value);
 	int computeWeightIndex( int source_neuron_number, int target_neuron_number );
 	void readRowFromFile(FILE* fp, short* array, short defaultVal);
+	void readMultipleRowsFromFile(FILE* fp, short* array, short defaultVal);
 	void readRowFromFile(FILE* fp, double* array, double defaultVal);
+	void readMultipleRowsFromFile(FILE* fp, double* array, double defaultVal);
 public:
 	void cycleNetwork( void );
 	void cycleNetworkSquash(  double offset, double expSlope );

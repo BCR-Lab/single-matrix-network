@@ -1132,6 +1132,21 @@ void Network::readRowFromFile(FILE* fp, short* array, short defaultVal) {
  the appropriate array index. If a value is not found in the file, set it to the given
  default value
  */
+void Network::readMultipleRowsFromFile(FILE* fp, short* array, short defaultVal) {
+	for( int i = 0 ; i < networkDimension*networkDimension; ++i) {
+		int items = fscanf(fp,"%lf",&array[i]);
+		if (items == 0) {
+			array[i] = defaultVal;
+		}
+	}
+
+}
+
+/*
+ Read the values from the file at the given file pointer and set each one into
+ the appropriate array index. If a value is not found in the file, set it to the given
+ default value
+ */
 void Network::readRowFromFile(FILE* fp, double* array, double defaultVal) {
 	for( int i = 0 ; i < networkDimension; ++i) {
 		int items = fscanf(fp,"%lf",&array[i]);
@@ -1141,6 +1156,20 @@ void Network::readRowFromFile(FILE* fp, double* array, double defaultVal) {
 	}
 }
 
+/*
+ Read the values from the file at the given file pointer and set each one into
+ the appropriate array index. If a value is not found in the file, set it to the given
+ default value
+ */
+void Network::readMultipleRowsFromFile(FILE* fp, double* array, double defaultVal) {
+	for( int i = 0 ; i < networkDimension*networkDimension; ++i) {
+		int items = fscanf(fp,"%lf",&array[i]);
+		if (items == 0) {
+			array[i] = defaultVal;
+		}
+	}
+
+}
 
 /* --------------------------------------------------
 
@@ -1186,7 +1215,8 @@ int Network::readNetworkFromFile( std::string file_name )
 		readRowFromFile(fp, neuronWeightTotal, 1.0);
 	// Read the stored network weights
 		fscanf(fp,"%s",&dummy);
-		for( i = 0 ; i < networkDimension*networkDimension; ++i) fscanf(fp,"%lf",&networkWeights[i]);
+		readMultipleRowsFromFile(fp, networkWeights, 0.0);
+//		for( i = 0 ; i < networkDimension*networkDimension; ++i) fscanf(fp,"%lf",&networkWeights[i]);
 	// Read the stored network inputs
 		fscanf(fp,"%s",&dummy);
 		readRowFromFile(fp, networkInputs, 0.0);
@@ -1196,7 +1226,8 @@ int Network::readNetworkFromFile( std::string file_name )
 		readRowFromFile(fp, networkOutputs, 0.0);
 	// Read the stored network plastic weights mask
 		fscanf(fp,"%s",&dummy);
-		for( i = 0 ; i < networkDimension*networkDimension; ++i) fscanf(fp,"%d",&plasticWeightsMask[i]);
+		readMultipleRowsFromFile(fp, plasticWeightsMask, 0.0);
+//		for( i = 0 ; i < networkDimension*networkDimension; ++i) fscanf(fp,"%d",&plasticWeightsMask[i]);
 	}
 
 	fclose(fp);
