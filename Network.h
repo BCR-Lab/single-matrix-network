@@ -13,6 +13,7 @@
 #include <stdio.h>
 
 #include <string>
+#include <vector>
 
 #define MAX_NET_DIMENSION 100
 #define MAX_NET_INPUTS 10		// Cannot exceed the size of the net
@@ -97,6 +98,7 @@ public:
 	void writeNetworkActivationStateToFile( std::string file_name );
 	void writeNetworkWeightsToFile( std::string file_name );
 	void setNetworkInput( double *vector);
+	void setNetworkInput(std::vector<double>);
 	void getNetworkOuput( double * vector );
 	int readNetworkFromFile( std::string file_name);
 	int writeNetworkToFile( std::string file_name );

@@ -6,9 +6,11 @@
 #include "Network.h"
 #include <stdio.h>
 #include <math.h>
-#include <string>
 #include <algorithm>
+#include <string>
 #include <iostream>
+#include <vector>
+using namespace std;
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -268,12 +270,21 @@ void Network::setNetworkInput( double *vector)
 
 	for(i = 0; i< numberOfInputs ; ++i) {
 		networkInputs[i] = vector[i];
-//printf("input %lf ",vector[i]);
+//printf("input %d <= %lf\n",i, vector[i]);
 //printf("input %lf ",networkInputs[i]);
 
 	}
 //printf("\n ");
 
+}
+
+void Network::setNetworkInput(vector<double> values)
+{
+	int i;
+
+	for(i = 0; i< numberOfInputs ; ++i) {
+		networkInputs[i] = values[i];
+	}
 }
 
 /* --------------------------------------------------
@@ -554,7 +565,6 @@ void Network::setNetworkWeightsUpperLowerTriangleAndDiagonal( double diagonal_va
 
 }
 
-/* --------------------------------------------------
 /* --------------------------------------------------
 
   setPlasticWeightsMask
