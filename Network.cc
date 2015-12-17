@@ -57,7 +57,7 @@ Network::Network(int inputs, int interneurons, int outputs, char * out_file_name
 // This is a blank constructor that will not use a text file, same as above.
 Network::Network(int inputs, int interneurons, int outputs)
 {
-	printf("Network Construction.\n");
+	printf("Network Construction.\n\r");
 	numberOfInputs = inputs ;
 	numberOfOutputs = outputs;
 	numberOfInterNeurons = interneurons;
@@ -75,6 +75,29 @@ Network::Network(int inputs, int interneurons, int outputs)
 	normalizeNeuronWeights( );		// Set the sum of network weights for each unit to the unit total specified above.
 	
 }
+
+// This is a blank constructor that will not use a text file, same as above but with the ability to set default states for neurons
+Network::Network(int inputs, int interneurons, int outputs, double outThresh, double learnRate, int refractState)
+{
+	printf("Network Construction.\n\r");
+	numberOfInputs = inputs ;
+	numberOfOutputs = outputs;
+	numberOfInterNeurons = interneurons;
+	networkDimension = numberOfInputs + numberOfOutputs + numberOfInterNeurons;
+
+	setNeuronOutput( 0.0 );			// set initial activations to zero. Maybe better to be one.
+	setNeuronThresholds( outThresh );		// set thresholds for output in network neurons.
+	setNeuronLearningRate( learnRate );	// set learning rates for network neurons -- 0 means that neuron does not adjust its connection weights
+	setNeuronRefractoryState( refractState );	// set set refactory state for neurons in the network - 0 is no refactory state -- must not be negative.
+	setNeuronWeightTotal( 1.0 );		// set set weight for neurons in the network - 1.0 typical and default.
+	setNetworkWeights( 0.0 );		// Temporary function and value to test the code
+	setNeuronActivation( 0.0 );		// Temporary function and value to test the code
+	setNetworkOutputs( 0.0 );
+	setPlasticWeightsMask( 0 );
+	normalizeNeuronWeights( );		// Set the sum of network weights for each unit to the unit total specified above.
+	
+}
+
 
 // This constructor Assumes a properly formatted data file.  It does no checking or corrections.
 Network::Network( char * file_name )
@@ -119,27 +142,27 @@ void Network::instantiateDefaultNetwork( void )
   */
 void Network::PrintNetworkState( void )
 {
-	printf(" Number of inputs: %d\n",numberOfInputs);
-	printf(" Number of outputs: %d\n",numberOfOutputs);
-	printf(" Number of interneuorns: %d\n",numberOfInterNeurons);
-	printf(" Network Dimension: %d\n",networkDimension);
+	printf(" Number of inputs: %d\n\r",numberOfInputs);
+	printf(" Number of outputs: %d\n\r",numberOfOutputs);
+	printf(" Number of interneuorns: %d\n\r",numberOfInterNeurons);
+	printf(" Network Dimension: %d\n\r",networkDimension);
 	printNetworkWeights();
 }
 
 void Network::printNetworkWeights(void) {
 
-	printf(" Network weights:\n");
+	printf(" Network weights:\n\r");
 	int item_count = 0;
 	printf("  ");
 	int i;
 	for (i = 0 ; i < networkDimension; ++i)	{
 		printf("    %2d", i + 1);
 	}
-	printf("\n  ");
+	printf("\n\r  ");
 	for (i = 0 ; i < networkDimension; ++i)	{
 		printf("------");
 	}
-	printf("\n");
+	printf("\n\r");
 	for (i = 0 ; i < networkDimension*networkDimension; ++i) {
 		if (item_count == 0) {
 			printf("%2d|", (i / networkDimension) + 1);
@@ -147,7 +170,7 @@ void Network::printNetworkWeights(void) {
 		printf("% .2f ", networkWeights[i]);
 		++item_count;
 		if (item_count == networkDimension) {
-			printf("\n");
+			printf("\n\r");
 			item_count = 0;
 		}
 	}
@@ -459,13 +482,13 @@ void Network::setNetworkWeightsUpperLowerTriangleAndDiagonal( double diagonal_va
 
   setNetworkWeightsFull
 
-  function that takes a vector and changes the values of the weights
+  function that takes an array pointer and changes the values of the weights
  
 */
 void Network::setNetworkWeightsFull(double *input)
 {
 	for(int i = 0; i < networkDimension*networkDimension; i++){
-		networkWeights[i] = input[i];
+		networkWeights[i] = *(input + i);
 	}
 }
 
@@ -650,7 +673,7 @@ void Network::printNetworkOuput( void )
 	for(i = 0; i< numberOfOutputs; ++i) {
 		printf("%f ",networkOutputs[i]);
 	}
-	printf("\n");
+	printf("\n\r");
 
 }
 

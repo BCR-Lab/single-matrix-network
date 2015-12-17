@@ -21,6 +21,7 @@ public:
 	Network::Network( char * file_name );	// Construct the network from a stored file.
 	Network::Network(int inputs, int interneurons, int outputs, char * file_name ); // construct a blank network to user specified size and write it to a file for later editing
 	Network::Network(int inputs, int interneurons, int outputs); 
+	Network::Network(int inputs, int interneurons, int outputs, double outThresh, double learnRate, int refractState);
 	virtual ~Network();
 
 	// Members---------------------
